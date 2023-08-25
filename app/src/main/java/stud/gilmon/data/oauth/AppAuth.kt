@@ -86,9 +86,9 @@ object AppAuth {
         const val RESPONSE_TYPE = ResponseTypeValues.CODE
         const val SCOPE = "user,repo"
 
-        const val CLIENT_ID = "..."
-        const val CLIENT_SECRET = "..."
-        const val CALLBACK_URL = "ru.kts.oauth://github.com/callback"
-        const val LOGOUT_CALLBACK_URL = "ru.kts.oauth://github.com/logout_callback"
+        const val CLIENT_ID = "0d07973a1740ad8d65a3"
+        const val CLIENT_SECRET = "b50a852533c99305339d8fdf9feec51f1d74499a"
+        const val CALLBACK_URL = "stud.oauth://github.com/callback"
+        const val LOGOUT_CALLBACK_URL = "stud.oauth://github.com/logout_callback"
     }
 }

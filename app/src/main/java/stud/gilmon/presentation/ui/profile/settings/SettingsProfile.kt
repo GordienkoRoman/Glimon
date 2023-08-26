@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import kotlinx.coroutines.launch
 import stud.gilmon.base.utils.launchAndCollectIn
 import stud.gilmon.presentation.components.CustomButton
@@ -42,14 +43,13 @@ import timber.log.Timber
 
 
 @Composable
-fun SettingsProfile(darkTheme:Boolean, settings: Settings = Settings(), toggleTheme:()-> Unit){
-
-
-
-
-
+fun SettingsProfile(darkTheme:Boolean,
+                    settings: Settings = Settings(),
+                    toggleTheme:()-> Unit,
+                    viewModelFactory: ViewModelFactory
+){
     val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
-    val viewModel: SettingsViewModel = viewModel()
+    val viewModel: SettingsViewModel = viewModel(factory=viewModelFactory)
     val text = remember{ mutableStateOf("responsetext") }
     val logoutResponse = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(), onResult = {

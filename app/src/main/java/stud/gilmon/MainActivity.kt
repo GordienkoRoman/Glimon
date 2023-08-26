@@ -15,16 +15,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import stud.gilmon.presentation.ui.main.MainScreen
 import stud.gilmon.presentation.theme.GilmonTheme
 import javax.inject.Inject
 
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
+
+
     @Inject
-    lateinit var application: BaseApplication
+    lateinit var  viewModelFactory: ViewModelFactory
+    private val component by lazy {
+        (application as BaseApplication).component
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
-        //component.inject(this)
+        component.inject(this)
         super.onCreate(savedInstanceState)
         setContent {
 
@@ -37,7 +43,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    MainScreen(darkTheme, toggleTheme = { darkTheme=!darkTheme })
+                    MainScreen(darkTheme, toggleTheme = { darkTheme=!darkTheme }, viewModelFactory = viewModelFactory)
                 }
             }
         }

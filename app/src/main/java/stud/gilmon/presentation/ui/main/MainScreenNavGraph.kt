@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import stud.gilmon.presentation.ui.main.Graph.HOME_GRAPH
 import stud.gilmon.presentation.ui.main.Graph.PROFILE_GRAPH
 import stud.gilmon.presentation.ui.feed.FeedScreen
@@ -26,7 +27,10 @@ object Graph {
 }
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun MainScreenNavGraph(darkTheme:Boolean,navController: NavHostController ,paddingValues: PaddingValues,toggleTheme:()-> Unit){
+fun MainScreenNavGraph(darkTheme:Boolean,navController: NavHostController,
+                       paddingValues: PaddingValues,toggleTheme:()-> Unit,
+                       viewModelFactory: ViewModelFactory
+){
     NavHost(
         modifier= Modifier.consumeWindowInsets(PaddingValues(50.dp))
             .windowInsetsPadding(
@@ -45,7 +49,7 @@ fun MainScreenNavGraph(darkTheme:Boolean,navController: NavHostController ,paddi
             SupportScreen()
         }
         composable(route = PROFILE_GRAPH){
-            ProfileScreen(darkTheme, toggleTheme = toggleTheme)
+            ProfileScreen(darkTheme, toggleTheme = toggleTheme,viewModelFactory = viewModelFactory)
         }
     }
 }

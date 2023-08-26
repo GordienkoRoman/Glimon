@@ -5,13 +5,19 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import stud.gilmon.presentation.ui.main.Graph
 import stud.gilmon.presentation.ui.profile.coupons.CouponsProfile
 import stud.gilmon.presentation.ui.profile.reviews.ReviewsProfile
 import stud.gilmon.presentation.ui.profile.settings.SettingsProfile
 
 @Composable
-fun ProfileNavGraph(darkTheme:Boolean, navController: NavHostController, paddingValues: PaddingValues,toggleTheme:()-> Unit) {
+fun ProfileNavGraph(darkTheme:Boolean,
+                    navController: NavHostController,
+                    paddingValues: PaddingValues,
+                    toggleTheme:()-> Unit,
+                    viewModelFactory: ViewModelFactory
+) {
 
     NavHost(
         navController = navController,
@@ -26,7 +32,7 @@ fun ProfileNavGraph(darkTheme:Boolean, navController: NavHostController, padding
             ReviewsProfile()
         }
         composable(route = ProfileDestinations.SettingsProfile.route) {
-            SettingsProfile(darkTheme, toggleTheme = toggleTheme)
+            SettingsProfile(darkTheme, toggleTheme = toggleTheme,viewModelFactory = viewModelFactory)
         }
     }
 }

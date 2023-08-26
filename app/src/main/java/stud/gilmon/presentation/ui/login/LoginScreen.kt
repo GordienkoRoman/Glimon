@@ -59,6 +59,7 @@ import javax.inject.Scope
 fun LoginScreen(navController: NavHostController,onClose:()-> Unit) {
     val scope = rememberCoroutineScope()
     val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
+
     val viewModel: LoginViewModel = viewModel()
     val getAuthResponse = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(), onResult = {

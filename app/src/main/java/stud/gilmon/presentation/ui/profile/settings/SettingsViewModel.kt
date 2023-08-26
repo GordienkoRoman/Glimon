@@ -10,6 +10,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -23,21 +25,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import net.openid.appauth.AuthorizationService
 import stud.gilmon.R
+import stud.gilmon.data.github.GithubApi
 import stud.gilmon.data.github.UserRepository
 import stud.gilmon.data.oauth.AuthRepository
+import timber.log.Timber
+import javax.inject.Inject
 
-class SettingsViewModel(application:Application) : AndroidViewModel(application){
+class SettingsViewModel @Inject constructor(
+    context: Context,
+    private val githubApi: GithubApi) : ViewModel(){
 
     private val Context.dataStore by preferencesDataStore(name = "settings")
-    private val dataStore = application.dataStore
-
+    private val dataStore = context.dataStore
     private val loadingMutableStateFlow = MutableStateFlow(false)
     private val userInfoMutableStateFlow = MutableStateFlow<RemoteGithubUser?>(null)
     private val toastEventChannel = Channel<Int>(Channel.BUFFERED)
     private val logoutPageEventChannel = Channel<Intent>(Channel.BUFFERED)
     private val logoutCompletedEventChannel = Channel<Unit>(Channel.BUFFERED)
 
-    private val authService: AuthorizationService = AuthorizationService(getApplication())
+    private val authService: AuthorizationService = AuthorizationService(context.applicationContext)
 
     private val authRepository = AuthRepository()
     private val userRepository = UserRepository()
@@ -95,14 +101,17 @@ class SettingsViewModel(application:Application) : AndroidViewModel(application)
     }
 
     fun loadUserInfo() {
+
         viewModelScope.launch {
             loadingMutableStateFlow.value = true
             runCatching {
+                githubApi.getCurrentUser()
                 userRepository.getUserInformation()
             }.onSuccess {
                 userInfoMutableStateFlow.value = it
                 loadingMutableStateFlow.value = false
             }.onFailure {
+                Timber.tag("Oauth").d(it)
                 loadingMutableStateFlow.value = false
                 userInfoMutableStateFlow.value = null
                 toastEventChannel.trySendBlocking(R.string.get_user_error)
@@ -128,4 +137,19 @@ class SettingsViewModel(application:Application) : AndroidViewModel(application)
         super.onCleared()
         authService.dispose()
     }
+}
+class SettingsViewModelFactory @Inject constructor(
+    private val context: Context,
+    private val githubApi: GithubApi
+) :
+    ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+            SettingsViewModel(this.context, this.githubApi) as T
+        } else {
+            throw IllegalArgumentException("ViewModel Not Found")
+        }
+    }
+
 }

@@ -26,16 +26,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
 import stud.gilmon.presentation.theme.BackGroundDark2
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(darkTheme:Boolean, navController: NavHostController = rememberNavController(),toggleTheme:()-> Unit) {
+fun ProfileScreen(darkTheme:Boolean,
+                  navController: NavHostController = rememberNavController(),
+                  toggleTheme:()-> Unit,
+                  viewModelFactory: ViewModelFactory
+) {
     Scaffold(topBar = { ProfileTopAppBar(navController = navController) },
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
     ) {
-        ProfileNavGraph(darkTheme,navController = navController, paddingValues = it, toggleTheme = toggleTheme)
+        ProfileNavGraph(darkTheme,navController = navController, paddingValues = it, toggleTheme = toggleTheme,viewModelFactory = viewModelFactory)
     }
 
 }

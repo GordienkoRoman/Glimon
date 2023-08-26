@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import kotlinx.coroutines.launch
 import stud.gilmon.R
 import stud.gilmon.presentation.components.CustomDragHandle
@@ -46,7 +47,10 @@ import stud.gilmon.presentation.ui.login.LoginScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(darkTheme:Boolean,navController: NavHostController = rememberNavController(),toggleTheme:()-> Unit){
+fun MainScreen(darkTheme:Boolean,
+               navController: NavHostController = rememberNavController(),
+               toggleTheme:()-> Unit,
+viewModelFactory: ViewModelFactory){
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
 
@@ -65,7 +69,7 @@ fun MainScreen(darkTheme:Boolean,navController: NavHostController = rememberNavC
         Scaffold(bottomBar = { MainBottomAppBar(navController = navController) },
             contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
         ) {
-            MainScreenNavGraph(darkTheme,navController,it, toggleTheme = toggleTheme)
+            MainScreenNavGraph(darkTheme,navController,it, toggleTheme = toggleTheme,viewModelFactory = viewModelFactory)
         }
     }
 

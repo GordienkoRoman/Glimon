@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,75 +43,91 @@ import stud.gilmon.presentation.components.CustomList
 
 
 @OptIn(ExperimentalLayoutApi::class)
-@Preview
 @Composable
-fun CouponsProfile(){
+fun CouponsProfile(lazyListState: LazyListState) {
+
     val viewModel: CouponsViewModel = viewModel()
     val couponStatus = rememberSaveable { mutableStateOf("All") }
     val sortType = rememberSaveable { mutableStateOf("By new") }
     val screenState = viewModel.screenState.collectAsState(CouponsScreenState.Initial)
     val showCouponStatusBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showSortTypeBottomSheet = rememberSaveable { mutableStateOf(false) }
-    Column(modifier = Modifier
-        .background(MaterialTheme.colorScheme.background)
-        .fillMaxSize()
-        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
-        .padding(top = 75.dp),
-    verticalArrangement = Arrangement.spacedBy(15.dp)) {
-        SelectButton("Coupon status",  couponStatus.value)
-        {
-            showCouponStatusBottomSheet.value = !showCouponStatusBottomSheet.value
-        }
-            val windowInsets = WindowInsets(0)
-        SelectButton("How to sort?",  sortType.value)
-        {
-            showSortTypeBottomSheet.value = !showSortTypeBottomSheet.value
-        }
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-                  modifier= Modifier
-                      .fillMaxWidth()
-                      .padding(
-                          top = 10.dp,
-                          start = 25.dp,
-                          end = 25.dp
-                      )
-                      .clip(shape = RoundedCornerShape(20.dp))
-                      .background(BackGroundDark2),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item{
-                Column(Modifier.height(200.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center){
-                    Icon(imageVector=ImageVector.vectorResource(R.drawable.blank_paper_icon),
-                            contentDescription = null,
-                        tint = Color.White,
-                    modifier = Modifier.size(50.dp))
-                    Text(text = "Empty list",
-                    fontSize=30.sp,
-                    color = Color.White)
-                }
+
+
+    val windowInsets = WindowInsets(0)
+
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(
+                top = 75.dp,
+                start = 25.dp,
+                end = 25.dp
+            ),
+        state = lazyListState,
+        verticalArrangement = Arrangement.spacedBy(15.dp)
+    ) {
+        item {
+            SelectButton("Coupon status", couponStatus.value)
+            {
+                showCouponStatusBottomSheet.value = !showCouponStatusBottomSheet.value
             }
         }
-        CopunsStatusBottomSheet(showCouponStatusBottomSheet,couponStatus )
-        SortTypeBottomSheet(showSortTypeBottomSheet, sortType)
-
+        item {
+            SelectButton("How to sort?", sortType.value)
+            {
+                showSortTypeBottomSheet.value = !showSortTypeBottomSheet.value
+            }
+        }
+        items(20) {
+            Column(
+                Modifier.clip(shape = RoundedCornerShape(20.dp)).fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onBackground)
+                    ,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.blank_paper_icon),
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(50.dp)
+                )
+                Text(
+                    text = "Empty list",
+                    fontSize = 30.sp,
+                    color = Color.White
+                )
+            }
+        }
     }
-}
-@Composable
-fun CopunsStatusBottomSheet(showModalBottomSheet: MutableState<Boolean>,option: MutableState<String>){
-    if (showModalBottomSheet.value)
-      CustomBottomSheetContainer(showModalBottomSheet = showModalBottomSheet) {
-        CustomList(listOf("All", "Current", "Expired"),option,showModalBottomSheet)
-    }
+    CopunsStatusBottomSheet(showCouponStatusBottomSheet, couponStatus)
+    SortTypeBottomSheet(showSortTypeBottomSheet, sortType)
+
 }
 
 @Composable
-fun SortTypeBottomSheet(showModalBottomSheet: MutableState<Boolean>,option: MutableState<String>){
+fun CopunsStatusBottomSheet(
+    showModalBottomSheet: MutableState<Boolean>,
+    option: MutableState<String>
+) {
     if (showModalBottomSheet.value)
         CustomBottomSheetContainer(showModalBottomSheet = showModalBottomSheet) {
-            CustomList(listOf("By new", "By old", "By amount of discount"),option,showModalBottomSheet)
+            CustomList(listOf("All", "Current", "Expired"), option, showModalBottomSheet)
+        }
+}
+
+@Composable
+fun SortTypeBottomSheet(showModalBottomSheet: MutableState<Boolean>, option: MutableState<String>) {
+    if (showModalBottomSheet.value)
+        CustomBottomSheetContainer(showModalBottomSheet = showModalBottomSheet) {
+            CustomList(
+                listOf("By new", "By old", "By amount of discount"),
+                option,
+                showModalBottomSheet
+            )
         }
 }
 

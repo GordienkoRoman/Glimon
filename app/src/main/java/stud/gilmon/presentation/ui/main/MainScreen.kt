@@ -48,6 +48,7 @@ import stud.gilmon.presentation.ui.login.LoginScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(darkTheme:Boolean,
+               login:String,
                navController: NavHostController = rememberNavController(),
                toggleTheme:()-> Unit,
 viewModelFactory: ViewModelFactory){
@@ -57,16 +58,18 @@ viewModelFactory: ViewModelFactory){
     BottomSheetScaffold(
         sheetDragHandle = {CustomDragHandle()},
         sheetContent = {
-            LoginScreen(navController) {
+            LoginScreen(navController, viewModelFactory = viewModelFactory) {
                 scope.launch {
-                    if(scaffoldState.bottomSheetState.isVisible)
-                    scaffoldState.bottomSheetState.partialExpand()
+                    if (scaffoldState.bottomSheetState.isVisible)
+                    {
+                        scaffoldState.bottomSheetState.partialExpand()
+                    }
                 }
             }
         },
         scaffoldState = scaffoldState
     ) {
-        Scaffold(bottomBar = { MainBottomAppBar(navController = navController) },
+        Scaffold(bottomBar = { MainBottomAppBar(navController = navController,login) },
             contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
         ) {
             MainScreenNavGraph(darkTheme,navController,it, toggleTheme = toggleTheme,viewModelFactory = viewModelFactory)
@@ -76,7 +79,7 @@ viewModelFactory: ViewModelFactory){
 }
 
 @Composable
-fun MainBottomAppBar(navController: NavController) {
+fun MainBottomAppBar(navController: NavController,login: String) {
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = MainTab.values()
     CustomNavigationBar(
@@ -94,7 +97,7 @@ fun MainBottomAppBar(navController: NavController) {
                 onClick = {
                     selectedTab = tab.title
                     val route = when (tab) {
-                        MainTab.PROFILE -> Graph.PROFILE_GRAPH
+                        MainTab.PROFILE -> Graph.PROFILE_GRAPH+"/"+login
                         MainTab.SUPPORT -> MainScreenDestinations.SupportMain.route
                         MainTab.FEED -> MainScreenDestinations.FeedMain.route
                     }

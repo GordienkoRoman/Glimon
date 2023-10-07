@@ -40,11 +40,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import stud.gilmon.base.utils.launchAndCollectIn
+import stud.gilmon.data.oauth.GithubAuthConfig
+import stud.gilmon.data.oauth.MailAuthConfig
 import stud.gilmon.presentation.components.CustomText
 import stud.gilmon.presentation.components.CustomTextField
 import stud.gilmon.presentation.components.LabelText
@@ -56,11 +60,10 @@ import stud.gilmon.presentation.ui.profile.coupons.CouponsViewModel
 import javax.inject.Scope
 
 @Composable
-fun LoginScreen(navController: NavHostController,onClose:()-> Unit) {
+fun LoginScreen(navController: NavHostController,viewModelFactory: ViewModelFactory,onClose:()-> Unit) {
     val scope = rememberCoroutineScope()
     val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
-
-    val viewModel: LoginViewModel = viewModel()
+    val viewModel: LoginViewModel = viewModel(factory = viewModelFactory)
     val getAuthResponse = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(), onResult = {
             if (it.data != null) {
@@ -74,8 +77,15 @@ fun LoginScreen(navController: NavHostController,onClose:()-> Unit) {
             getAuthResponse.launch(it)
         }
         viewModel.authSuccessFlow.launchAndCollectIn(lifecycleOwner.value) {
-            navController.navigate(Graph.PROFILE_GRAPH)
+            //viewModel.setUser(viewModel.config.login)
+            viewModel.loadUserInfo(viewModel.config.login)
+
+            navController.navigate(Graph.PROFILE_GRAPH+"/"+viewModel.config.login)
             onClose()
+        }
+        viewModel.remoteUserGithubInfoFlow.launchAndCollectIn(lifecycleOwner.value){
+            val a = it
+
         }
     }
     Column(
@@ -144,8 +154,15 @@ fun LoginScreen(navController: NavHostController,onClose:()-> Unit) {
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
+            SocialNetworkIcon(color = OrangeOdnoklassniki){
+                viewModel.config = GithubAuthConfig
+               viewModel.openLoginPage()
+            }
             SocialNetworkIcon(color = OrangeOdnoklassniki)
-            SocialNetworkIcon(color = OrangeOdnoklassniki)
+            {
+                viewModel.config = MailAuthConfig
+                viewModel.openLoginPage()
+            }
             SocialNetworkIcon(color = OrangeOdnoklassniki)
         }
         Row(

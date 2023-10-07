@@ -17,11 +17,12 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import stud.gilmon.BaseApplication
 import stud.gilmon.MainActivity
-import stud.gilmon.data.github.GithubApi
-import stud.gilmon.data.network.AuthorizationFailedInterceptor
-import stud.gilmon.data.network.AuthorizationInterceptor
-import stud.gilmon.data.network.Network
-import stud.gilmon.data.oauth.TokenStorage
+import stud.gilmon.MainViewModel
+import stud.gilmon.data.remote.network.AuthorizationInterceptor
+import stud.gilmon.data.remote.userApi.GithubApi
+import stud.gilmon.data.remote.userApi.MailApi
+import stud.gilmon.presentation.ui.login.LoginViewModel
+import stud.gilmon.presentation.ui.profile.ProfileViewModel
 import stud.gilmon.presentation.ui.profile.settings.SettingsViewModel
 import timber.log.Timber
 import javax.inject.Scope
@@ -32,7 +33,8 @@ annotation class AppScope
 
 @AppScope
 @Component(modules = [AppModule::class,
-    ViewModelModule::class])
+    ViewModelModule::class,
+DataBaseModule::class])
 interface AppComponent  {
     @OptIn(ExperimentalMaterial3Api::class)
     fun inject(mainActivity: MainActivity)
@@ -59,18 +61,28 @@ class AppModule {
                     .setLevel(HttpLoggingInterceptor.Level.BODY)
             )
             .addNetworkInterceptor(AuthorizationInterceptor())
-            .addNetworkInterceptor(AuthorizationFailedInterceptor(AuthorizationService(context), TokenStorage))
             .build()
     }
     @AppScope
     @Provides
-    fun provideDogApiFactService(okHttpClient: OkHttpClient): GithubApi {
+    fun provideGithubApiFactService(okHttpClient: OkHttpClient): GithubApi {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.github.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
         return retrofit.create(GithubApi::class.java)
+    }
+
+    @AppScope
+    @Provides
+    fun provideMailApiFactService(okHttpClient: OkHttpClient): MailApi {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://www.appsmail.ru/platform/api")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+        return retrofit.create(MailApi::class.java)
     }
 
 
@@ -82,4 +94,19 @@ interface ViewModelModule{
     @IntoMap
     @ViewModelKey(SettingsViewModel::class)
     fun bindSettingsViewModel(viewModel: SettingsViewModel):ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ProfileViewModel::class)
+    fun bindProfileViewModel(viewModel: ProfileViewModel):ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LoginViewModel::class)
+    fun bindLoginViewModel(viewModel: LoginViewModel):ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MainViewModel::class)
+    fun bindMainViewModel(viewModel: MainViewModel):ViewModel
 }

@@ -27,8 +27,10 @@ object Graph {
 }
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun MainScreenNavGraph(darkTheme:Boolean,navController: NavHostController,
-                       paddingValues: PaddingValues,toggleTheme:()-> Unit,
+fun MainScreenNavGraph(darkTheme:Boolean,
+                       navController: NavHostController,
+                       paddingValues: PaddingValues,
+                       toggleTheme:()-> Unit,
                        viewModelFactory: ViewModelFactory
 ){
     NavHost(
@@ -48,8 +50,9 @@ fun MainScreenNavGraph(darkTheme:Boolean,navController: NavHostController,
         composable(route = MainScreenDestinations.SupportMain.route){
             SupportScreen()
         }
-        composable(route = PROFILE_GRAPH){
-            ProfileScreen(darkTheme, toggleTheme = toggleTheme,viewModelFactory = viewModelFactory)
+        composable(route = "$PROFILE_GRAPH/{login}"){
+            val login = it.arguments?.getString("login") ?: "404"
+            ProfileScreen(darkTheme,login, toggleTheme = toggleTheme,viewModelFactory = viewModelFactory)
         }
     }
 }

@@ -73,9 +73,9 @@ fun SupportScreen() {
         CustomButton(text = "Contact Support")
         CustomText(text = "Social Networks:")
         Row {
-            SocialNetworkIcon(R.drawable.vk_logo)
+            SocialNetworkIcon(idIcon = R.drawable.vk_logo)
             Spacer(Modifier.width(15.dp))
-            SocialNetworkIcon(R.drawable.odnoklassniki)
+            SocialNetworkIcon(idIcon = R.drawable.odnoklassniki)
         }
         CustomText(text = "Phone Number:")
         Button(onClick = {

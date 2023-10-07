@@ -1,7 +1,6 @@
 package stud.gilmon
 
 import android.app.Application
-import stud.gilmon.data.network.Network
 import stud.gilmon.di.AppComponent
 import stud.gilmon.di.DaggerAppComponent
 import timber.log.Timber

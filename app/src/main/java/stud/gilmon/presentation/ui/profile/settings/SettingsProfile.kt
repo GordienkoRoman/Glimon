@@ -51,23 +51,21 @@ fun SettingsProfile(darkTheme:Boolean,
     val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
     val viewModel: SettingsViewModel = viewModel(factory=viewModelFactory)
     val text = remember{ mutableStateOf("responsetext") }
-    val logoutResponse = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(), onResult = {
-            if(it.resultCode == Activity.RESULT_OK) {
-                viewModel.webLogoutComplete()
-            } else {
-                // логаут отменен
-                // делаем complete тк github не редиректит после логаута и пользователь закрывает CCT
-                viewModel.webLogoutComplete()
-            }
-        })
+//    val logoutResponse = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.StartActivityForResult(), onResult = {
+//            if(it.resultCode == Activity.RESULT_OK) {
+//                viewModel.webLogoutComplete()
+//            } else {
+//                // логаут отменен
+//                // делаем complete тк github не редиректит после логаута и пользователь закрывает CCT
+//                viewModel.webLogoutComplete()
+//            }
+//        })
     SideEffect {
-        viewModel.userInfoFlow.launchAndCollectIn(lifecycleOwner.value) { userInfo ->
+       /* viewModel.userInfoFlow.launchAndCollectIn(lifecycleOwner.value) { userInfo ->
            text.value = userInfo?.login ?: "got     null"
-        }
-        viewModel.logoutPageFlow.launchAndCollectIn(lifecycleOwner.value) {
-            logoutResponse.launch(it)
-        }
+        }*/
+
     }
     Column(modifier = Modifier
         .background(MaterialTheme.colorScheme.background)
@@ -82,14 +80,12 @@ fun SettingsProfile(darkTheme:Boolean,
         verticalArrangement = Arrangement.spacedBy(15.dp)) {
         Timber.tag("JC_TAG").d("screen")
         PersonalData()
-        CustomButton(text = "API ${text.value}"){
-            viewModel.loadUserInfo()
-        }
+
         AccountSettings(settings)
         AdditionalSettings(darkTheme)
         CustomButton(text = "switch theme", onClick = toggleTheme)
         CustomButton(text = "Log Out"){
-            viewModel.logout()
+
         }
     }
 }

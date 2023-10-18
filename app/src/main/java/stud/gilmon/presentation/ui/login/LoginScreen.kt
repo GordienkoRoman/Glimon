@@ -25,8 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
@@ -35,15 +33,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import stud.gilmon.base.utils.launchAndCollectIn
@@ -54,10 +48,8 @@ import stud.gilmon.presentation.components.CustomTextField
 import stud.gilmon.presentation.components.LabelText
 import stud.gilmon.presentation.components.SocialNetworkIcon
 import stud.gilmon.presentation.theme.OrangeOdnoklassniki
+import stud.gilmon.presentation.theme.SpacerColor
 import stud.gilmon.presentation.theme.YellowButton
-import stud.gilmon.presentation.ui.main.Graph
-import stud.gilmon.presentation.ui.profile.coupons.CouponsViewModel
-import javax.inject.Scope
 
 @Composable
 fun LoginScreen(navController: NavHostController,viewModelFactory: ViewModelFactory,onClose:()-> Unit) {
@@ -77,10 +69,9 @@ fun LoginScreen(navController: NavHostController,viewModelFactory: ViewModelFact
             getAuthResponse.launch(it)
         }
         viewModel.authSuccessFlow.launchAndCollectIn(lifecycleOwner.value) {
-            //viewModel.setUser(viewModel.config.login)
-            viewModel.loadUserInfo(viewModel.config.login)
+            viewModel.setUser(viewModel.config.login)
 
-            navController.navigate(Graph.PROFILE_GRAPH+"/"+viewModel.config.login)
+          //  navController.navigate(Graph.PROFILE_GRAPH+"/"+viewModel.config.login)
             onClose()
         }
         viewModel.remoteUserGithubInfoFlow.launchAndCollectIn(lifecycleOwner.value){
@@ -122,7 +113,7 @@ fun LoginScreen(navController: NavHostController,viewModelFactory: ViewModelFact
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.LightGray)
+                .background(SpacerColor)
                 .size(1.dp)
         )
         CustomTextField(value = "", label = "email")

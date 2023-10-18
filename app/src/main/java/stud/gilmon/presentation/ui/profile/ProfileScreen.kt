@@ -5,7 +5,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -26,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +39,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
-import stud.gilmon.presentation.theme.BackGroundDark2
+import stud.gilmon.data.local.entities.UsersEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,17 +51,39 @@ fun ProfileScreen(
     viewModelFactory: ViewModelFactory
 ) {
     val viewModel: ProfileViewModel = viewModel(factory = viewModelFactory)
+//    var user : UsersEntity = UsersEntity(reviewId = 0, userId = "")
+//    LaunchedEffect(key1 = Unit){
+//        user = viewModel.getUser(login)
+//    }
+
+    val  user = viewModel.getUser(login)
+
+   mainContent(
+       darkTheme = darkTheme,
+       user = user,
+       toggleTheme = { toggleTheme()},
+       viewModelFactory = viewModelFactory
+   )
+
+
+}
+@Composable
+fun mainContent(darkTheme: Boolean,
+                user: UsersEntity,
+                navController: NavHostController = rememberNavController(),
+                toggleTheme: () -> Unit,
+                viewModelFactory: ViewModelFactory){
     val lazyListStateList: List<LazyListState> = listOf(
         rememberLazyListState(),
         rememberLazyListState(),
         rememberLazyListState()
     )
     Scaffold(
-        content = {
+        content = { paddingValues ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it)
+                    .padding(paddingValues)
             ) {
                 Scaffold(
                     modifier = Modifier.padding(top = TOP_BAR_HEIGHT),
@@ -73,6 +92,7 @@ fun ProfileScreen(
                 ) {
                     ProfileNavGraph(
                         darkTheme,
+                        user =user,
                         lazyListStateList,
                         navController = navController,
                         paddingValues = it,
@@ -84,8 +104,6 @@ fun ProfileScreen(
             }
         }
     )
-
-
 }
 
 @Composable
@@ -95,9 +113,9 @@ fun ProfileTopNavigationBar(navController: NavController) {
     // val navBackStackEntry by navController.currentBackStackEntryAsState()
     //  val currentRoute = navBackStackEntry?.destination?.route
     NavigationBar(
-        Modifier.height(50.dp)
+        Modifier.height(TOP_NAVIGATION_BAR_HEICHT)
             ,
-        containerColor = BackGroundDark2,
+        containerColor = MaterialTheme.colorScheme.onBackground,
     ) {
         tabs.forEach { tab ->
             NavigationBarItem(
@@ -154,6 +172,7 @@ fun ProfileTopBar(lazyListState: LazyListState) {
 }
 
 val TOP_BAR_HEIGHT = 56.dp
+val TOP_NAVIGATION_BAR_HEICHT = 50.dp
 val LazyListState.isScrolled: Boolean
     get() = firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0
 

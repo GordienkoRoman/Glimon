@@ -10,12 +10,10 @@ import dagger.Component
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
-import net.openid.appauth.AuthorizationService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import stud.gilmon.BaseApplication
 import stud.gilmon.MainActivity
 import stud.gilmon.MainViewModel
 import stud.gilmon.data.remote.network.AuthorizationInterceptor
@@ -26,18 +24,22 @@ import stud.gilmon.presentation.ui.profile.ProfileViewModel
 import stud.gilmon.presentation.ui.profile.settings.SettingsViewModel
 import timber.log.Timber
 import javax.inject.Scope
-import javax.inject.Singleton
 
 @Scope
 annotation class AppScope
 
 @AppScope
-@Component(modules = [AppModule::class,
-    ViewModelModule::class,
-DataBaseModule::class])
-interface AppComponent  {
+@Component(
+    modules = [AppModule::class,
+        ViewModelModule::class,
+        DataBaseModule::class,
+        DataStoreModule::class,
+        DispatcherModule::class]
+)
+interface AppComponent {
     @OptIn(ExperimentalMaterial3Api::class)
     fun inject(mainActivity: MainActivity)
+
     @Component.Factory
     interface Factory {
 
@@ -52,8 +54,8 @@ class AppModule {
 
     @AppScope
     @Provides
-    fun provideOkhttpClient(context:Context): OkHttpClient {
-        return  OkHttpClient.Builder()
+    fun provideOkhttpClient(context: Context): OkHttpClient {
+        return OkHttpClient.Builder()
             .addNetworkInterceptor(
                 HttpLoggingInterceptor {
                     Timber.tag("NetworkInit").d(it)
@@ -63,6 +65,7 @@ class AppModule {
             .addNetworkInterceptor(AuthorizationInterceptor())
             .build()
     }
+
     @AppScope
     @Provides
     fun provideGithubApiFactService(okHttpClient: OkHttpClient): GithubApi {
@@ -89,24 +92,24 @@ class AppModule {
 }
 
 @Module
-interface ViewModelModule{
+interface ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(SettingsViewModel::class)
-    fun bindSettingsViewModel(viewModel: SettingsViewModel):ViewModel
+    fun bindSettingsViewModel(viewModel: SettingsViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(ProfileViewModel::class)
-    fun bindProfileViewModel(viewModel: ProfileViewModel):ViewModel
+    fun bindProfileViewModel(viewModel: ProfileViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(LoginViewModel::class)
-    fun bindLoginViewModel(viewModel: LoginViewModel):ViewModel
+    fun bindLoginViewModel(viewModel: LoginViewModel): ViewModel
 
     @Binds
     @IntoMap
     @ViewModelKey(MainViewModel::class)
-    fun bindMainViewModel(viewModel: MainViewModel):ViewModel
+    fun bindMainViewModel(viewModel: MainViewModel): ViewModel
 }

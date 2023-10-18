@@ -1,25 +1,23 @@
 package stud.gilmon.presentation.ui.profile.settings
 
-import android.app.Application
 import android.content.Context
-import android.content.Intent
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.lifecycle.AndroidViewModel
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import stud.gilmon.data.local.entities.UsersEntity
+import stud.gilmon.domain.RoomRepository
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
+    private val roomRepository: RoomRepository,
     context: Context
 ) : ViewModel(){
 
@@ -27,6 +25,9 @@ class SettingsViewModel @Inject constructor(
     private val dataStore = context.dataStore
 
 
+    fun updateUserData(usersEntity: UsersEntity){
+        roomRepository.upsertUser(usersEntity)
+    }
 
 
     val darkThemeFlow = dataStore.data

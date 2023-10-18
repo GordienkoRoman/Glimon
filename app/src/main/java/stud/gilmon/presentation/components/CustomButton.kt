@@ -21,15 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import stud.gilmon.presentation.theme.BackGroundDark2
 import stud.gilmon.presentation.theme.SpacerColor
 
 @Composable
-fun CustomButton(text: String,modifier: Modifier=Modifier, onClick: () -> Unit = {}) {
+fun CustomButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.onBackground,
+    textColor:Color = Color.White,
+    onClick: () -> Unit = {}
+) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.onBackground
+            containerColor = containerColor
         ),
         shape = RoundedCornerShape(5.dp),
         modifier = modifier
@@ -40,13 +45,13 @@ fun CustomButton(text: String,modifier: Modifier=Modifier, onClick: () -> Unit =
 
         Text(
             text = text,
-            color = Color.White,
+            color = textColor,
         )
     }
 }
 
 @Composable
-fun CustomCancelButton(text: String,modifier: Modifier=Modifier, onClick: () -> Unit = {}) {
+fun CustomCancelButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -96,11 +101,16 @@ fun LinkButton(text: String, icon: ImageVector, onClick: () -> Unit = {}) {
 }
 
 @Composable
-fun SelectButton(labelText: String, text: String,underline:Boolean=false,onClick: () -> Unit = {}) {
+fun SelectButton(
+    labelText: String,
+    text: String,
+    underline: Boolean = false,
+    onClick: () -> Unit = {}
+) {
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = BackGroundDark2
+            containerColor = MaterialTheme.colorScheme.onBackground
         ),
         shape = RoundedCornerShape(5.dp),
         modifier = Modifier
@@ -124,9 +134,12 @@ fun SelectButton(labelText: String, text: String,underline:Boolean=false,onClick
             tint = MaterialTheme.colorScheme.onSecondary
         )
     }
-    if(underline)
-        Spacer(Modifier.padding(horizontal = 20.dp)
-            .fillMaxWidth()
-            .size(1.dp)
-            .background(SpacerColor))
+    if (underline)
+        Spacer(
+            Modifier
+                .padding(horizontal = 20.dp)
+                .fillMaxWidth()
+                .size(1.dp)
+                .background(SpacerColor)
+        )
 }

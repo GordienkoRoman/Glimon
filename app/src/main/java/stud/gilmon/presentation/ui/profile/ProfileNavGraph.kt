@@ -7,18 +7,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.presentation.ui.main.Graph
 import stud.gilmon.presentation.ui.profile.coupons.CouponsProfile
 import stud.gilmon.presentation.ui.profile.reviews.ReviewsProfile
 import stud.gilmon.presentation.ui.profile.settings.SettingsProfile
 
 @Composable
-fun ProfileNavGraph(darkTheme:Boolean,
-                    lazyListStateList: List<LazyListState>,
-                    navController: NavHostController,
-                    paddingValues: PaddingValues,
-                    toggleTheme:()-> Unit,
-                    viewModelFactory: ViewModelFactory
+fun ProfileNavGraph(
+    darkTheme: Boolean,
+    user: UsersEntity,
+    lazyListStateList: List<LazyListState>,
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    toggleTheme: () -> Unit,
+    viewModelFactory: ViewModelFactory
 ) {
 
     NavHost(
@@ -31,10 +34,16 @@ fun ProfileNavGraph(darkTheme:Boolean,
             CouponsProfile(lazyListStateList[0])
         }
         composable(route = ProfileDestinations.ReviewsProfile.route) {
-            ReviewsProfile()
+            ReviewsProfile(lazyListStateList[0])
         }
         composable(route = ProfileDestinations.SettingsProfile.route) {
-            SettingsProfile(darkTheme, toggleTheme = toggleTheme,viewModelFactory = viewModelFactory)
+            SettingsProfile(
+                darkTheme,
+                userEntity = user,
+                lazyListState = lazyListStateList[2],
+                toggleTheme = toggleTheme,
+                viewModelFactory = viewModelFactory
+            )
         }
     }
 }

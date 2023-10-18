@@ -4,16 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,16 +26,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import stud.gilmon.R
 import stud.gilmon.presentation.components.CustomBottomSheetContainer
 import stud.gilmon.presentation.components.SelectButton
-import stud.gilmon.presentation.theme.BackGroundDark2
 import androidx.compose.runtime.*
 import stud.gilmon.presentation.components.CustomList
+import stud.gilmon.presentation.ui.profile.TOP_NAVIGATION_BAR_HEICHT
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -54,7 +49,6 @@ fun CouponsProfile(lazyListState: LazyListState) {
     val showSortTypeBottomSheet = rememberSaveable { mutableStateOf(false) }
 
 
-    val windowInsets = WindowInsets(0)
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -62,14 +56,19 @@ fun CouponsProfile(lazyListState: LazyListState) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .padding(
-                top = 75.dp,
-                start = 25.dp,
-                end = 25.dp
-            ),
+                top = TOP_NAVIGATION_BAR_HEICHT,
+                start = 15.dp,
+                end = 15.dp,
+                bottom = 75.dp
+            )
+            .navigationBarsPadding(),
         state = lazyListState,
         verticalArrangement = Arrangement.spacedBy(15.dp)
-    ) {
+    ){
         item {
+            Spacer( modifier = Modifier
+                .fillMaxWidth()
+                .size(15.dp))
             SelectButton("Coupon status", couponStatus.value)
             {
                 showCouponStatusBottomSheet.value = !showCouponStatusBottomSheet.value
@@ -114,7 +113,9 @@ fun CopunsStatusBottomSheet(
     option: MutableState<String>
 ) {
     if (showModalBottomSheet.value)
-        CustomBottomSheetContainer(showModalBottomSheet = showModalBottomSheet) {
+        CustomBottomSheetContainer(
+            showModalBottomSheet = showModalBottomSheet,
+            onDismissRequest = { showModalBottomSheet.value = false }) {
             CustomList(listOf("All", "Current", "Expired"), option, showModalBottomSheet)
         }
 }
@@ -122,7 +123,9 @@ fun CopunsStatusBottomSheet(
 @Composable
 fun SortTypeBottomSheet(showModalBottomSheet: MutableState<Boolean>, option: MutableState<String>) {
     if (showModalBottomSheet.value)
-        CustomBottomSheetContainer(showModalBottomSheet = showModalBottomSheet) {
+        CustomBottomSheetContainer(
+            showModalBottomSheet = showModalBottomSheet,
+            onDismissRequest = { showModalBottomSheet.value = false }) {
             CustomList(
                 listOf("By new", "By old", "By amount of discount"),
                 option,

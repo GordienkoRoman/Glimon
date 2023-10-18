@@ -1,10 +1,13 @@
 package stud.gilmon.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,9 +27,27 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun CustomList(radioOptions:List<String>,  option: MutableState<String>,showModalBottomSheet: MutableState<Boolean>){
+fun CustomList(
+    radioOptions: List<String>,
+    option: MutableState<String>,
+    showModalBottomSheet: MutableState<Boolean>,
+    onDismissRequest: () -> Unit = {}
+) {
+    val scope = rememberCoroutineScope()
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     Column(Modifier.selectableGroup()) {
+        Text(
+            text = "Choose coupon status",
+            color = Color.LightGray,
+            modifier = Modifier.padding(vertical = 15.dp)
+
+        )
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.LightGray)
+                .size(1.dp)
+        )
         radioOptions.forEach { text ->
             Row(
                 Modifier
@@ -33,23 +55,25 @@ fun CustomList(radioOptions:List<String>,  option: MutableState<String>,showModa
                     .height(60.dp)
                     .selectable(
                         selected = (text == option.value),
-                        onClick = {option.value=text
-                                  showModalBottomSheet.value=!showModalBottomSheet.value},
+                        onClick = {
+                            option.value = text
+                            onDismissRequest()
+                        },
                         role = Role.RadioButton
-                    )
-                    ,
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = text,
                     color = Color.White,
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp)
+                    modifier = Modifier
+                        .padding(start = 16.dp)
                         .weight(1f)
                 )
                 RadioButton(
                     selected = (text == option.value),
-                    onClick = null ,
+                    onClick = null,
                     colors = RadioButtonDefaults.colors(
                         selectedColor = MaterialTheme.colorScheme.tertiary
                     )
@@ -57,5 +81,10 @@ fun CustomList(radioOptions:List<String>,  option: MutableState<String>,showModa
 
             }
         }
+    }
+    CustomCancelButton(
+        text = "Cancel"
+    ) {
+        showModalBottomSheet.value = false
     }
 }

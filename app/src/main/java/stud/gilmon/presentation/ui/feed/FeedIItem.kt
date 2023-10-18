@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import stud.gilmon.R
 import stud.gilmon.domain.FeedItem
 import stud.gilmon.presentation.components.IconWithText
-import stud.gilmon.presentation.theme.BackGroundDark2
+import stud.gilmon.presentation.theme.SpacerColor
 
 @Preview
 @Composable
@@ -47,7 +48,7 @@ fun FeedItem(
         Column(
             modifier = Modifier
                 .clickable { onDetails(item.id) }
-                .background(BackGroundDark2)
+                .background(MaterialTheme.colorScheme.onBackground)
         ) {
             Surface(
                 modifier = modifier
@@ -67,7 +68,7 @@ fun FeedItem(
                 }
             }
             Text(
-                text = "${item.title}",
+                text = item.title,
                 color = Color.White,
                 maxLines = 1,
                 textAlign = TextAlign.Start,
@@ -89,7 +90,7 @@ fun FeedItem(
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.LightGray)
+                    .background(SpacerColor)
                     .size(2.dp)
             )
             IconWithText(icon = Icons.Filled.ShoppingCart, text ="123")

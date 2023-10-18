@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -38,6 +39,42 @@ import stud.gilmon.presentation.theme.TextFieldLabelColor
 @Composable
 fun CustomBottomSheetContainer(
     showModalBottomSheet: MutableState<Boolean>,
+    onDismissRequest: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit
+) {
+
+    val skipPartially by remember { mutableStateOf(true) }
+    val bottomSheetState = rememberModalBottomSheetState(skipPartially)
+
+    androidx.compose.material3.ModalBottomSheet(
+        containerColor = MaterialTheme.colorScheme.onBackground,
+        onDismissRequest = { onDismissRequest() },
+        sheetState = bottomSheetState,
+        windowInsets = WindowInsets.safeDrawing,
+        dragHandle = { CustomDragHandle() },
+    )
+    {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                //.windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
+                .padding(bottom = 30.dp, start = 10.dp, end = 10.dp)
+                .background(MaterialTheme.colorScheme.onBackground),
+            horizontalAlignment = CenterHorizontally
+        ) {
+
+
+            content()
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ChangeBottomSheetContainer(
+    showModalBottomSheet: MutableState<Boolean>,
+    onDismissRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -46,7 +83,7 @@ fun CustomBottomSheetContainer(
 
     androidx.compose.material3.ModalBottomSheet(
         containerColor = MaterialTheme.colorScheme.onBackground,
-        onDismissRequest = { showModalBottomSheet.value = false },
+        onDismissRequest = { onDismissRequest() },
         sheetState = bottomSheetState,
         windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom),
         dragHandle = { CustomDragHandle() },

@@ -1,37 +1,31 @@
 package stud.gilmon.presentation.ui.main
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ThumbUp
-import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -57,6 +51,8 @@ viewModelFactory: ViewModelFactory){
 
     BottomSheetScaffold(
         sheetDragHandle = {CustomDragHandle()},
+        containerColor = MaterialTheme.colorScheme.onBackground,
+        sheetContainerColor =MaterialTheme.colorScheme.onBackground,
         sheetContent = {
             LoginScreen(navController, viewModelFactory = viewModelFactory) {
                 scope.launch {
@@ -67,10 +63,11 @@ viewModelFactory: ViewModelFactory){
                 }
             }
         },
+        modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
         scaffoldState = scaffoldState
     ) {
         Scaffold(bottomBar = { MainBottomAppBar(navController = navController,login) },
-            contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
+            contentWindowInsets = WindowInsets.safeDrawing
         ) {
             MainScreenNavGraph(darkTheme,navController,it, toggleTheme = toggleTheme,viewModelFactory = viewModelFactory)
         }

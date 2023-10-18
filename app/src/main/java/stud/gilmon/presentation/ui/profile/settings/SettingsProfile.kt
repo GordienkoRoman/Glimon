@@ -1,127 +1,322 @@
 package stud.gilmon.presentation.ui.profile.settings
 
-import android.app.Activity
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.launch
-import stud.gilmon.base.utils.launchAndCollectIn
+import stud.gilmon.data.local.entities.UsersEntity
+import stud.gilmon.presentation.components.ChangeEmailBottomSheet
+import stud.gilmon.presentation.components.ChangePasswordBottomSheet
+import stud.gilmon.presentation.components.ChangePhoneNumberBottomSheet
+import stud.gilmon.presentation.components.ChooseFamilyStatusBottomSheet
+import stud.gilmon.presentation.components.ChooseGenderBottomSheet
 import stud.gilmon.presentation.components.CustomButton
 import stud.gilmon.presentation.components.CustomTextField
 import stud.gilmon.presentation.components.LabelText
 import stud.gilmon.presentation.components.SelectButton
-import stud.gilmon.presentation.theme.BackGroundDark2
-import stud.gilmon.presentation.ui.login.handleAuthResponseIntent
+import stud.gilmon.presentation.theme.DatePickerGray
+import stud.gilmon.presentation.theme.DatePickerLightGray
+import stud.gilmon.presentation.ui.profile.TOP_NAVIGATION_BAR_HEICHT
 import timber.log.Timber
+import java.time.LocalDate
+import java.util.Locale
 
 
 @Composable
-fun SettingsProfile(darkTheme:Boolean,
-                    settings: Settings = Settings(),
-                    toggleTheme:()-> Unit,
-                    viewModelFactory: ViewModelFactory
-){
+fun SettingsProfile(
+    darkTheme: Boolean,
+    lazyListState: LazyListState,
+    userEntity: UsersEntity,
+    toggleTheme: () -> Unit,
+    viewModelFactory: ViewModelFactory
+) {
     val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
-    val viewModel: SettingsViewModel = viewModel(factory=viewModelFactory)
-    val text = remember{ mutableStateOf("responsetext") }
-//    val logoutResponse = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.StartActivityForResult(), onResult = {
-//            if(it.resultCode == Activity.RESULT_OK) {
-//                viewModel.webLogoutComplete()
-//            } else {
-//                // логаут отменен
-//                // делаем complete тк github не редиректит после логаута и пользователь закрывает CCT
-//                viewModel.webLogoutComplete()
-//            }
-//        })
+    val viewModel: SettingsViewModel = viewModel(factory = viewModelFactory)
+    val text = remember { mutableStateOf("responsetext") }
+
+    val user = remember {
+        mutableStateOf(userEntity)
+    }
     SideEffect {
-       /* viewModel.userInfoFlow.launchAndCollectIn(lifecycleOwner.value) { userInfo ->
-           text.value = userInfo?.login ?: "got     null"
-        }*/
+        /* viewModel.userInfoFlow.launchAndCollectIn(lifecycleOwner.value) { userInfo ->
+            text.value = userInfo?.login ?: "got     null"
+         }*/
 
     }
-    Column(modifier = Modifier
-        .background(MaterialTheme.colorScheme.background)
-        .fillMaxSize()
-        .padding(
-            top = 75.dp,
-            start = 25.dp,
-            end = 25.dp,
-            bottom = 75.dp
-        )
-        .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(15.dp)) {
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .padding(
+                top = TOP_NAVIGATION_BAR_HEICHT,
+                start = 15.dp,
+                end = 15.dp,
+                bottom = 75.dp
+            )
+            .navigationBarsPadding(),
+        state = lazyListState,
+        verticalArrangement = Arrangement.spacedBy(15.dp)
+    ) {
         Timber.tag("JC_TAG").d("screen")
-        PersonalData()
-
-        AccountSettings(settings)
-        AdditionalSettings(darkTheme)
-        CustomButton(text = "switch theme", onClick = toggleTheme)
-        CustomButton(text = "Log Out"){
-
+        item {
+            Spacer( modifier = Modifier
+                .fillMaxWidth()
+                .size(15.dp))
+            PersonalData(
+                viewModel = viewModel,
+                user
+            )
+        }
+        item {
+            AccountSettings(
+                viewModel = viewModel,
+                user
+            )
+        }
+        item {
+            AdditionalSettings(darkTheme)
+        }
+        item {
+            CustomButton(text = "switch theme", onClick = toggleTheme)
+            CustomButton(text = "Log Out") {
+            }
         }
     }
 }
 
 @Composable
-fun PersonalData(){
-    Column(modifier = Modifier
-        .clip(shape = RoundedCornerShape(20.dp))
-        .background(BackGroundDark2)
-        .padding(15.dp)
-        .fillMaxWidth(),
+fun PersonalData(
+    viewModel: SettingsViewModel,
+    user: MutableState<UsersEntity>
+) {
+    val name = rememberSaveable { mutableStateOf(user.value.firstName) }
+    val lastName = rememberSaveable { mutableStateOf(user.value.lastName) }
+    val gender = rememberSaveable { mutableStateOf(user.value.gender) }
+    //val dateOfBirth = rememberSaveable { mutableStateOf(user.age) }
+    val familyStatus = rememberSaveable { mutableStateOf(user.value.familyStatus) }
+    val aboutMe = rememberSaveable { mutableStateOf(user.value.familyStatus) }
+    val showChooseGenderBottomSheet = rememberSaveable { mutableStateOf(false) }
+    val showCooseFamilyStatusBottomSheet = rememberSaveable { mutableStateOf(false) }
+    var date by remember {
+        mutableStateOf(LocalDate.now())
+    }
+    var focusedKey by remember { mutableStateOf(false) }
+    val focusModifier = Modifier.onFocusChanged { //save updates after focus changes.
+        if (it.isFocused) {
+            focusedKey = true
+        }
+        if (!it.isFocused) {
+            if (focusedKey) {
+                val updUser = UsersEntity(
+                    name.value,
+                    lastName.value,
+                    gender.value,
+                    date.toString(),
+                    familyStatus.value,
+                    aboutMe.value,
+                    reviewId = user.value.reviewId,
+                    userId = user.value.userId
+                )
+                if(user.value !=updUser)
+                {
+                    user.value = updUser
+                    viewModel.updateUserData(user.value)
+                }
+                focusedKey = false
+            }
+        }
+    }
+    val onDismiss = {
+        viewModel.updateUserData(
+            UsersEntity(
+                name.value,
+                lastName.value,
+                gender.value,
+                date.toString(),
+                familyStatus.value,
+                aboutMe.value,
+                reviewId = user.value.reviewId,
+                userId = user.value.userId
+            )
+        )
+    }
+    val dateDialogState = rememberMaterialDialogState()
+    Column(
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.onBackground)
+            .padding(15.dp)
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
-    ){
-        LabelText(text = "Label")
+    ) {
+        LabelText(text = "Personal data")
+        CustomTextField(
+            modifier = Modifier.then(focusModifier),
+            value = name.value, label = "Name"
+        )
+        {
+            name.value = it
+        }
+        CustomTextField(
+            modifier = Modifier.then(focusModifier),
+            value = lastName.value, label = "Surname"
+        )
+        {
+            lastName.value = it
+        }
+        CustomButton(text = date.toString()) {
+            dateDialogState.show()
+        }
+        SelectButton(labelText = "Gender", text = gender.value)
+        {
+            showChooseGenderBottomSheet.value = !showChooseGenderBottomSheet.value
+        }
+        SelectButton(labelText = "Family status", text = familyStatus.value)
+        {
+            showCooseFamilyStatusBottomSheet.value = !showCooseFamilyStatusBottomSheet.value
+        }
+        CustomTextField(
+            modifier = Modifier.then(focusModifier),
+            value = aboutMe.value, label = "About me"
+        ) {
+            aboutMe.value = it
+        }
 
-        CustomTextField(value = "text", label = "label")
-        CustomTextField(value = "text", label = "label")
-        CustomTextField(value = "", label = "label")
+    }
 
+    MaterialDialog(
+        dialogState = dateDialogState,
+        autoDismiss = true,
+        backgroundColor = DatePickerGray,
+        buttons = {
+            positiveButton(text = "Ok", textStyle = TextStyle(Color.LightGray))
+            negativeButton(text = "Cancel", textStyle = TextStyle(Color.LightGray))
+        },
+
+        ) {
+        this.datepicker(
+            colors = DatePickerDefaults.colors(
+                headerBackgroundColor = DatePickerLightGray,
+                dateActiveBackgroundColor = DatePickerLightGray,
+                dateInactiveTextColor = Color.White,
+                dateActiveTextColor = Color.LightGray,
+                headerTextColor = Color.White,
+                calendarHeaderTextColor = Color.White
+            ),
+            initialDate = date,
+            locale = Locale.CANADA
+        )
+        {
+            date = it
+            viewModel.updateUserData(
+                UsersEntity(
+                    name.value,
+                    lastName.value,
+                    gender.value,
+                    date.toString(),
+                    familyStatus.value,
+                    aboutMe.value,
+                    reviewId = user.value.reviewId,
+                    userId = user.value.userId
+                )
+            )
+        }
+    }
+
+    ChooseGenderBottomSheet(showModalBottomSheet = showChooseGenderBottomSheet, option = gender) {
+        showChooseGenderBottomSheet.value = false
+       onDismiss()
+    }
+    ChooseFamilyStatusBottomSheet(
+        showModalBottomSheet = showCooseFamilyStatusBottomSheet,
+        option = familyStatus,
+    ) {
+        showCooseFamilyStatusBottomSheet.value = false
+        onDismiss()
     }
 }
 
 @Composable
-fun AccountSettings(settings: Settings){
-    Column(modifier = Modifier
-        .clip(shape = RoundedCornerShape(20.dp))
-        .background(BackGroundDark2)
-        .padding(15.dp)
-        .fillMaxWidth(),
+fun AccountSettings(
+    viewModel: SettingsViewModel,
+    user: MutableState<UsersEntity>
+) {
+    val showChangeEmailBottomSheet = rememberSaveable { mutableStateOf(false) }
+    val mail = rememberSaveable { mutableStateOf(user.value.mail) }
+    val showChangePhoneNumberBottomSheet = rememberSaveable { mutableStateOf(false) }
+    val number = rememberSaveable { mutableStateOf(user.value.number) }
+    val showChangePasswordBottomSheet = rememberSaveable { mutableStateOf(false) }
+    val password = rememberSaveable { mutableStateOf(user.value.password) }
+    val onDismiss = {
+        viewModel.updateUserData(
+            UsersEntity(
+                mail=mail.value,
+                number= number.value,
+                password = password.value,
+                reviewId = user.value.reviewId,
+                userId = user.value.userId
+            )
+        )
+    }
+    Column(
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.onBackground)
+            .padding(15.dp)
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         LabelText(text = "Label")
-        Log.d("JC_TAG","account")
-        SelectButton(labelText = "label", text = "text", underline = true)
-        SelectButton(labelText = "label", text = "text", underline = true)
-        SelectButton(labelText = "label", text = "text", underline = true)
+        Timber.tag("JC_TAG").d("account")
+        SelectButton(labelText = "E-mail", text = mail.value, underline = true) {
+            showChangeEmailBottomSheet.value = !showChangeEmailBottomSheet.value
+        }
+        SelectButton(labelText = "Phone number", text = number.value, underline = true)
+        {
+            showChangePhoneNumberBottomSheet.value = !showChangePhoneNumberBottomSheet.value
+        }
+        SelectButton(labelText = "Password", text = password.value, underline = true){
+            showChangePasswordBottomSheet.value=!showChangePasswordBottomSheet.value
+        }
         SelectButton(labelText = "label", text = "text", underline = true)
 
         Row(Modifier.padding(horizontal = 30.dp)) {
@@ -137,7 +332,7 @@ fun AccountSettings(settings: Settings){
                     )
                 }
             }
-            Switch(checked = settings.darkTheme,
+            Switch(checked = true,
                 colors = SwitchDefaults.colors(
                     uncheckedBorderColor = Color.Transparent,
                     uncheckedThumbColor = Color.White,
@@ -147,21 +342,40 @@ fun AccountSettings(settings: Settings){
                 onCheckedChange = { TODO() })
         }
     }
+    ChangeEmailBottomSheet(
+        showModalBottomSheet = showChangeEmailBottomSheet,
+        option = mail
+    ) {
+        showChangeEmailBottomSheet.value = false
+        onDismiss()
+    }
+    ChangePhoneNumberBottomSheet(
+        showModalBottomSheet = showChangePhoneNumberBottomSheet,
+        option = number
+    ) {
+        showChangePhoneNumberBottomSheet.value = false
+        onDismiss()
+    }
+    ChangePasswordBottomSheet(showModalBottomSheet = showChangePasswordBottomSheet, option = password) {
+        showChangePasswordBottomSheet.value=false
+        onDismiss()
+    }
 }
 
 @Composable
-fun AdditionalSettings(darkTheme:Boolean){
+fun AdditionalSettings(darkTheme: Boolean) {
     val coroutineScope = rememberCoroutineScope()
-    Column(modifier = Modifier
-        .clip(shape = RoundedCornerShape(20.dp))
-        .background(BackGroundDark2)
-        .padding(15.dp)
-        .fillMaxWidth(),
+    Column(
+        modifier = Modifier
+            .clip(shape = RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.onBackground)
+            .padding(15.dp)
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Log.d("JC_TAG","additional")
+        Timber.d("additional")
         LabelText(text = "Label")
-        SelectButton(labelText = "DARK THEME", text = darkTheme.toString(), underline = true){
+        SelectButton(labelText = "DARK THEME", text = darkTheme.toString(), underline = true) {
             coroutineScope.launch {
 
             }
@@ -169,4 +383,5 @@ fun AdditionalSettings(darkTheme:Boolean){
         SelectButton(labelText = "DARK THEME", text = "text", underline = true)
     }
 }
+
 

@@ -23,6 +23,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.presentation.components.ChangeEmailBottomSheet
 import stud.gilmon.presentation.components.SelectButton
 import stud.gilmon.presentation.ui.main.MainScreen
@@ -53,11 +54,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             val scope = rememberCoroutineScope()
             val login = remember { mutableStateOf("") }
+            val user = remember { mutableStateOf(UsersEntity(userId = "", reviewId = 1)) }
             val viewModel: MainViewModel = viewModel(factory = viewModelFactory)
-            viewModel.readFromDataStore.observe(
-                this
-            ) {
+            viewModel.readFromDataStore.observe(this) {
                 login.value = it.toString()
+                    user.value = viewModel.getUser(it.toString()) ?: user.value.copy()
             }
             installSplashScreen().apply {
 //                setKeepOnScreenCondition{
@@ -86,7 +87,7 @@ class MainActivity : ComponentActivity() {
 
                     MainScreen(
                         darkTheme,
-                        login.value,
+                        user,
                         toggleTheme = { darkTheme = !darkTheme },
                         viewModelFactory = viewModelFactory
                     )
@@ -111,14 +112,16 @@ fun test() {
             item {
                 SelectButton(labelText = "E-mail", text = mail.value, underline = true) {
                     showChangeEmailBottomSheet.value = !showChangeEmailBottomSheet.value
-                } }
+                }
+            }
             items(100) {
                 Text("item $it")
             }
             item {
                 SelectButton(labelText = "E-mail", text = mail.value, underline = true) {
-                showChangeEmailBottomSheet.value = !showChangeEmailBottomSheet.value
-            } }
+                    showChangeEmailBottomSheet.value = !showChangeEmailBottomSheet.value
+                }
+            }
         }
         TextField(
             value = "",

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -103,12 +104,7 @@ fun ChangeBottomSheetContainer(
                 modifier = Modifier.padding(vertical = 15.dp)
 
             )
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.LightGray)
-                    .size(1.dp)
-            )
+            Divider(thickness = 1.dp, color = Color.LightGray)
             content()
             CustomCancelButton(
                 text = "Cancel"

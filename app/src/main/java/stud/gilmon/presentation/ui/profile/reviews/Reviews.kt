@@ -1,5 +1,7 @@
 package stud.gilmon.presentation.ui.profile.reviews
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -32,9 +35,11 @@ import stud.gilmon.R
 import stud.gilmon.presentation.components.CustomBottomSheetContainer
 import stud.gilmon.presentation.components.CustomList
 import stud.gilmon.presentation.components.SelectButton
+import stud.gilmon.presentation.ui.profile.TOP_BAR_HEIGHT
 import stud.gilmon.presentation.ui.profile.coupons.CouponsScreenState
 import stud.gilmon.presentation.ui.profile.coupons.CouponsViewModel
 import stud.gilmon.presentation.ui.profile.TOP_NAVIGATION_BAR_HEICHT
+import stud.gilmon.presentation.ui.profile.isScrolled
 
 @Composable
 fun ReviewsProfile(lazyListState: LazyListState) {
@@ -44,9 +49,10 @@ fun ReviewsProfile(lazyListState: LazyListState) {
     val screenState = viewModel.screenState.collectAsState(CouponsScreenState.Initial)
     val showReviewsStatusBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showSortTypeBottomSheet = rememberSaveable { mutableStateOf(false) }
-
-
-
+    val topPadding by animateDpAsState(
+        targetValue = if (lazyListState.isScrolled) 0.dp else TOP_BAR_HEIGHT,
+        animationSpec = tween(durationMillis = 300)
+    )
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier

@@ -1,5 +1,7 @@
 package stud.gilmon.presentation.ui.profile.settings
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,13 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -33,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -54,7 +57,9 @@ import stud.gilmon.presentation.components.LabelText
 import stud.gilmon.presentation.components.SelectButton
 import stud.gilmon.presentation.theme.DatePickerGray
 import stud.gilmon.presentation.theme.DatePickerLightGray
+import stud.gilmon.presentation.ui.profile.TOP_BAR_HEIGHT
 import stud.gilmon.presentation.ui.profile.TOP_NAVIGATION_BAR_HEICHT
+import stud.gilmon.presentation.ui.profile.isScrolled
 import timber.log.Timber
 import java.time.LocalDate
 import java.util.Locale
@@ -64,23 +69,17 @@ import java.util.Locale
 fun SettingsProfile(
     darkTheme: Boolean,
     lazyListState: LazyListState,
-    userEntity: UsersEntity,
+    user: MutableState<UsersEntity>,
     toggleTheme: () -> Unit,
-    viewModelFactory: ViewModelFactory
+    viewModelFactory: ViewModelFactory,
+    onClick: () -> Unit
 ) {
-    val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
     val viewModel: SettingsViewModel = viewModel(factory = viewModelFactory)
-    val text = remember { mutableStateOf("responsetext") }
 
-    val user = remember {
-        mutableStateOf(userEntity)
-    }
-    SideEffect {
-        /* viewModel.userInfoFlow.launchAndCollectIn(lifecycleOwner.value) { userInfo ->
-            text.value = userInfo?.login ?: "got     null"
-         }*/
-
-    }
+    val topPadding by animateDpAsState(
+        targetValue = if (lazyListState.isScrolled) 0.dp else TOP_BAR_HEIGHT,
+        animationSpec = tween(durationMillis = 300)
+    )
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -98,9 +97,7 @@ fun SettingsProfile(
     ) {
         Timber.tag("JC_TAG").d("screen")
         item {
-            Spacer( modifier = Modifier
-                .fillMaxWidth()
-                .size(15.dp))
+            Divider(thickness = 1.dp, color = Color.White)
             PersonalData(
                 viewModel = viewModel,
                 user
@@ -118,6 +115,7 @@ fun SettingsProfile(
         item {
             CustomButton(text = "switch theme", onClick = toggleTheme)
             CustomButton(text = "Log Out") {
+                viewModel.setUser( onClick)
             }
         }
     }
@@ -133,12 +131,13 @@ fun PersonalData(
     val gender = rememberSaveable { mutableStateOf(user.value.gender) }
     //val dateOfBirth = rememberSaveable { mutableStateOf(user.age) }
     val familyStatus = rememberSaveable { mutableStateOf(user.value.familyStatus) }
-    val aboutMe = rememberSaveable { mutableStateOf(user.value.familyStatus) }
+    val aboutMe = rememberSaveable { mutableStateOf(user.value.aboutMe) }
     val showChooseGenderBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showCooseFamilyStatusBottomSheet = rememberSaveable { mutableStateOf(false) }
     var date by remember {
         mutableStateOf(LocalDate.now())
     }
+    val controller =  LocalSoftwareKeyboardController.current
     var focusedKey by remember { mutableStateOf(false) }
     val focusModifier = Modifier.onFocusChanged { //save updates after focus changes.
         if (it.isFocused) {
@@ -146,15 +145,13 @@ fun PersonalData(
         }
         if (!it.isFocused) {
             if (focusedKey) {
-                val updUser = UsersEntity(
-                    name.value,
-                    lastName.value,
-                    gender.value,
-                    date.toString(),
-                    familyStatus.value,
-                    aboutMe.value,
-                    reviewId = user.value.reviewId,
-                    userId = user.value.userId
+                val updUser = user.value.copy(
+                    firstName = name.value,
+                    lastName = lastName.value,
+                    gender = gender.value,
+                    age = date.toString(),
+                    familyStatus = familyStatus.value,
+                    aboutMe = aboutMe.value,
                 )
                 if(user.value !=updUser)
                 {
@@ -167,17 +164,15 @@ fun PersonalData(
     }
     val onDismiss = {
         viewModel.updateUserData(
-            UsersEntity(
-                name.value,
-                lastName.value,
-                gender.value,
-                date.toString(),
-                familyStatus.value,
-                aboutMe.value,
-                reviewId = user.value.reviewId,
-                userId = user.value.userId
-            )
+            user.value.copy(
+                firstName = name.value,
+                lastName = lastName.value,
+                gender = gender.value,
+                age = date.toString(),
+                familyStatus = familyStatus.value,
+                aboutMe = aboutMe.value,)
         )
+        controller?.hide()
     }
     val dateDialogState = rememberMaterialDialogState()
     Column(
@@ -248,15 +243,13 @@ fun PersonalData(
         {
             date = it
             viewModel.updateUserData(
-                UsersEntity(
-                    name.value,
-                    lastName.value,
-                    gender.value,
-                    date.toString(),
-                    familyStatus.value,
-                    aboutMe.value,
-                    reviewId = user.value.reviewId,
-                    userId = user.value.userId
+                user.value.copy(
+                    firstName = name.value,
+                    lastName = lastName.value,
+                    gender = gender.value,
+                    age = date.toString(),
+                    familyStatus = familyStatus.value,
+                    aboutMe = aboutMe.value,
                 )
             )
         }
@@ -286,16 +279,16 @@ fun AccountSettings(
     val number = rememberSaveable { mutableStateOf(user.value.number) }
     val showChangePasswordBottomSheet = rememberSaveable { mutableStateOf(false) }
     val password = rememberSaveable { mutableStateOf(user.value.password) }
+    val controller =  LocalSoftwareKeyboardController.current
     val onDismiss = {
         viewModel.updateUserData(
-            UsersEntity(
+            user.value.copy(
                 mail=mail.value,
                 number= number.value,
                 password = password.value,
-                reviewId = user.value.reviewId,
-                userId = user.value.userId
             )
         )
+       controller?.hide()
     }
     Column(
         modifier = Modifier

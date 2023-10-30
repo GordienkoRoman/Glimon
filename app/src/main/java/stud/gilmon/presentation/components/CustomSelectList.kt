@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -42,12 +43,8 @@ fun CustomList(
             modifier = Modifier.padding(vertical = 15.dp)
 
         )
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.LightGray)
-                .size(1.dp)
-        )
+        Divider( thickness = 1.dp, color = Color.LightGray)
+
         radioOptions.forEach { text ->
             Row(
                 Modifier

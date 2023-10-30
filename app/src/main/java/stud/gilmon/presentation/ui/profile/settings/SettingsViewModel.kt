@@ -13,11 +13,13 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import stud.gilmon.data.local.entities.UsersEntity
+import stud.gilmon.domain.DataStoreRepository
 import stud.gilmon.domain.RoomRepository
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
     private val roomRepository: RoomRepository,
+    private val dataStoreRepository: DataStoreRepository,
     context: Context
 ) : ViewModel(){
 
@@ -29,6 +31,12 @@ class SettingsViewModel @Inject constructor(
         roomRepository.upsertUser(usersEntity)
     }
 
+    fun setUser(onClick: () ->Unit) {
+        viewModelScope.launch {
+            dataStoreRepository.setUser("")
+            onClick()
+        }
+    }
 
     val darkThemeFlow = dataStore.data
         .catch { exception ->

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -43,15 +44,14 @@ import stud.gilmon.presentation.components.LinkButton
 import stud.gilmon.presentation.components.SocialNetworkIcon
 
 
-@Preview
 @Composable
-fun SupportScreen() {
+fun SupportScreen(onClick: ()->Unit) {
     val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp),
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.background)
-            .padding(horizontal = 25.dp)
+            .padding(horizontal = 25.dp, vertical = 20.dp)
             .fillMaxWidth()
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -60,7 +60,6 @@ fun SupportScreen() {
             text = "Suppot Service",
             fontSize = 30.sp,
             color = Color.White,
-            modifier = Modifier.padding(15.dp)
         )
         Image(
             painter = painterResource(id = R.drawable.support),
@@ -71,6 +70,9 @@ fun SupportScreen() {
         )
         CustomText(text = "Any question or suggestions?")
         CustomButton(text = "Contact Support")
+        {
+            onClick()
+        }
         CustomText(text = "Social Networks:")
         Row {
             SocialNetworkIcon(idIcon = R.drawable.vk_logo)

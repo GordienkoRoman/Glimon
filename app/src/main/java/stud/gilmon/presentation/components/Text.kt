@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import stud.gilmon.presentation.theme.TextFieldContainerColor
@@ -46,8 +47,7 @@ fun CustomTextField(
             ),
         modifier = modifier
             .padding(horizontal = 5.dp)
-            .fillMaxWidth()
-            .imePadding(),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
     )
 
@@ -55,13 +55,14 @@ fun CustomTextField(
 }
 
 @Composable
-fun CustomText(text: String, modifier: Modifier = Modifier) {
+fun CustomText(text: String, modifier: Modifier = Modifier, fontSize: TextUnit = TextUnit.Unspecified) {
     Text(
         text,
         color = Color.White,
         modifier = modifier.padding(
             horizontal = 15.dp
-        )
+        ),
+        fontSize = fontSize
     )
 }
 

@@ -98,6 +98,7 @@ fun FeedItem(
         }
     }
 }
+
 @Composable
 fun FeedItemBottom(){
     Row(){

@@ -1,5 +1,7 @@
 package stud.gilmon.presentation.ui.profile.coupons
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,7 +37,9 @@ import stud.gilmon.presentation.components.CustomBottomSheetContainer
 import stud.gilmon.presentation.components.SelectButton
 import androidx.compose.runtime.*
 import stud.gilmon.presentation.components.CustomList
+import stud.gilmon.presentation.ui.profile.TOP_BAR_HEIGHT
 import stud.gilmon.presentation.ui.profile.TOP_NAVIGATION_BAR_HEICHT
+import stud.gilmon.presentation.ui.profile.isScrolled
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -48,7 +53,10 @@ fun CouponsProfile(lazyListState: LazyListState) {
     val showCouponStatusBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showSortTypeBottomSheet = rememberSaveable { mutableStateOf(false) }
 
-
+    val topPadding by animateDpAsState(
+        targetValue = if (lazyListState.isScrolled) 0.dp else TOP_BAR_HEIGHT,
+        animationSpec = tween(durationMillis = 300)
+    )
 
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,9 +74,7 @@ fun CouponsProfile(lazyListState: LazyListState) {
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ){
         item {
-            Spacer( modifier = Modifier
-                .fillMaxWidth()
-                .size(15.dp))
+            Divider(thickness = 1.dp, color = Color.White)
             SelectButton("Coupon status", couponStatus.value)
             {
                 showCouponStatusBottomSheet.value = !showCouponStatusBottomSheet.value

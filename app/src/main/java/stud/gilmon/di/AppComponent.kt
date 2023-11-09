@@ -16,9 +16,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import stud.gilmon.MainActivity
 import stud.gilmon.MainViewModel
+import stud.gilmon.data.remote.UnsplashApi
 import stud.gilmon.data.remote.network.AuthorizationInterceptor
 import stud.gilmon.data.remote.userApi.GithubApi
 import stud.gilmon.data.remote.userApi.MailApi
+import stud.gilmon.presentation.ui.feed.FeedViewModel
 import stud.gilmon.presentation.ui.login.LoginViewModel
 import stud.gilmon.presentation.ui.profile.ProfileViewModel
 import stud.gilmon.presentation.ui.profile.settings.SettingsViewModel
@@ -58,7 +60,7 @@ class AppModule {
         return OkHttpClient.Builder()
             .addNetworkInterceptor(
                 HttpLoggingInterceptor {
-                    Timber.tag("NetworkInit").d(it)
+                    Timber.tag("Network").d(it)
                 }
                     .setLevel(HttpLoggingInterceptor.Level.BODY)
             )
@@ -87,7 +89,16 @@ class AppModule {
             .build()
         return retrofit.create(MailApi::class.java)
     }
-
+    @AppScope
+    @Provides
+    fun provideUnsplashImagesServise(okHttpClient: OkHttpClient): UnsplashApi {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.unsplash.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+        return retrofit.create(UnsplashApi::class.java)
+    }
 
 }
 
@@ -112,4 +123,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     fun bindMainViewModel(viewModel: MainViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FeedViewModel::class)
+    fun bindFeedViewModel(viewModel: FeedViewModel): ViewModel
 }

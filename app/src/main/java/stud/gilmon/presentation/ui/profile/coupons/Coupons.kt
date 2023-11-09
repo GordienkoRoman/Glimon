@@ -53,11 +53,6 @@ fun CouponsProfile(lazyListState: LazyListState) {
     val showCouponStatusBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showSortTypeBottomSheet = rememberSaveable { mutableStateOf(false) }
 
-    val topPadding by animateDpAsState(
-        targetValue = if (lazyListState.isScrolled) 0.dp else TOP_BAR_HEIGHT,
-        animationSpec = tween(durationMillis = 300)
-    )
-
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -74,7 +69,11 @@ fun CouponsProfile(lazyListState: LazyListState) {
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ){
         item {
-            Divider(thickness = 1.dp, color = Color.White)
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(15.dp)
+            )
             SelectButton("Coupon status", couponStatus.value)
             {
                 showCouponStatusBottomSheet.value = !showCouponStatusBottomSheet.value

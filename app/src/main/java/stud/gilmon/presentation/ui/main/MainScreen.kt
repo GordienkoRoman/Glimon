@@ -39,6 +39,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import stud.gilmon.R
 import stud.gilmon.data.local.entities.UsersEntity
+import stud.gilmon.data.remote.UnsplashImages
 import stud.gilmon.presentation.components.CustomDragHandle
 import stud.gilmon.presentation.components.CustomNavigationBar
 import stud.gilmon.presentation.ui.Screen
@@ -48,6 +49,7 @@ import stud.gilmon.presentation.ui.login.LoginScreen
 @Composable
 fun MainScreen(
     darkTheme: Boolean,
+    photos: List<UnsplashImages>,
     user: MutableState<UsersEntity>,
     navController: NavHostController = rememberNavController(),
     toggleTheme: () -> Unit,
@@ -85,6 +87,7 @@ fun MainScreen(
         ) {
             MainScreenNavGraph(
                 darkTheme,
+                photos,
                 navController,
                 it,
                 user,

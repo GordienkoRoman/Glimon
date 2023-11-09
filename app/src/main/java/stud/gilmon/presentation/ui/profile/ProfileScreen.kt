@@ -1,6 +1,5 @@
 package stud.gilmon.presentation.ui.profile
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,7 +35,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,16 +44,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
@@ -239,19 +234,6 @@ fun ProfileTopBar(
                         ),
                     contentDescription = "god_beauty",
                     contentScale = ContentScale.Crop)
-                AsyncImage(model = user.value.avatarUrl,
-                    modifier = Modifier
-                        .size(70.dp)
-                        .clip(CircleShape)
-                        .clickable(
-                            onClick = {
-                                singlePhotoPickerLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                )
-                            }
-                        ),
-                    contentDescription = "god_beauty",
-                contentScale = ContentScale.Crop)
             }
 
         }

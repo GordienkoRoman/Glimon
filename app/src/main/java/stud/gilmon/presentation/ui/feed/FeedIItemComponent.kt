@@ -17,29 +17,42 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import stud.gilmon.R
+import stud.gilmon.data.model.FeedItem
 import stud.gilmon.data.remote.UnsplashImages
 import stud.gilmon.presentation.components.CustomText
 import stud.gilmon.presentation.components.IconWithText
 import stud.gilmon.presentation.components.LabelText
 
-@Preview
 @Composable
-fun FeedItem(
+fun FeedItemComponent(
     photo: UnsplashImages = UnsplashImages(),
     modifier: Modifier = Modifier,
-    onDetails: (Int) -> Unit = {},
+    onItemClick: (Int) -> Unit = {},
+    index: Int
 ) {
+    val feedItem = remember {
+        mutableStateOf(FeedItem(
+            companyName = photo.user.name ?: "name",
+            promotionName = photo.user.name ?: "name",
+            description = photo.description ?: photo.user.bio ?: "Description",
+            location = photo.location.name ?: photo.user.location ?: "Location",
+            imgUrl = photo.urls?.raw.toString()
+        ))
+    }
+
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable { onItemClick(index) },
         shape = RoundedCornerShape(20.dp)
     ) {
         Box(
@@ -48,7 +61,7 @@ fun FeedItem(
                 .height(200.dp)
         ) {
             SubcomposeAsyncImage(
-                model = photo.urls?.raw,
+                model = feedItem.value.imgUrl,
                 contentDescription = "",
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop,
@@ -65,12 +78,12 @@ fun FeedItem(
                 .padding(horizontal = 15.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.spacedBy(15.dp),
         ) {
-            LabelText(text = photo.user.name ?: "name")
-            CustomText(text = photo.user.username ?: "name")
-            CustomText(text = photo.description ?: photo.user.bio ?: "Description")
-            CustomText(text = photo.location.name ?: photo.user.location ?: "Location")
+            LabelText(text = feedItem.value.companyName)
+            CustomText(text = feedItem.value.promotionName)
+            CustomText(text = feedItem.value.description)
+            CustomText(text = feedItem.value.location)
         }
-        Divider( thickness = 1.dp, color = Color.DarkGray)
+        Divider(thickness = 1.dp, color = Color.DarkGray)
 
         FeedItemBottom(photo)
     }
@@ -85,9 +98,15 @@ fun FeedItemBottom(photo: UnsplashImages) {
             .background(MaterialTheme.colorScheme.onBackground)
             .padding(horizontal = 15.dp, vertical = 20.dp)
     ) {
-        IconWithText(painter = painterResource(R.drawable.baseline_shopping_cart_24), text = (photo.downloads ?: 1).toString())
+        IconWithText(
+            painter = painterResource(R.drawable.baseline_shopping_cart_24),
+            text = (photo.downloads ?: 1).toString()
+        )
         Spacer(modifier = Modifier.width(15.dp))
-        IconWithText(painter = painterResource(R.drawable.baseline_message_24), text = (photo.likes ?: 1).toString())
+        IconWithText(
+            painter = painterResource(R.drawable.baseline_message_24),
+            text = (photo.likes ?: 1).toString()
+        )
 
     }
 }

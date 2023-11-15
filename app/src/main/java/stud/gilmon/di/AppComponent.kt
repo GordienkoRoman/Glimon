@@ -20,6 +20,7 @@ import stud.gilmon.data.remote.UnsplashApi
 import stud.gilmon.data.remote.network.AuthorizationInterceptor
 import stud.gilmon.data.remote.userApi.GithubApi
 import stud.gilmon.data.remote.userApi.MailApi
+import stud.gilmon.presentation.ui.feed.FeedItemScreen.FeedItemViewModel
 import stud.gilmon.presentation.ui.feed.FeedViewModel
 import stud.gilmon.presentation.ui.login.LoginViewModel
 import stud.gilmon.presentation.ui.profile.ProfileViewModel
@@ -128,4 +129,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(FeedViewModel::class)
     fun bindFeedViewModel(viewModel: FeedViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FeedItemViewModel::class)
+    fun bindFeedItemViewModel(viewModel: FeedItemViewModel): ViewModel
 }

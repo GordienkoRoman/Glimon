@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -47,6 +45,7 @@ import stud.gilmon.base.utils.launchAndCollectIn
 import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.remote.UnsplashImages
 import stud.gilmon.presentation.theme.GilmonTheme
+import stud.gilmon.presentation.ui.feed.FeedItemScreen.FeedItemScreen
 import stud.gilmon.presentation.ui.main.MainScreen
 import javax.inject.Inject
 
@@ -68,8 +67,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.loadingFlow.value
+            }
+        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        installSplashScreen()
         setContent {
             LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
@@ -84,11 +87,7 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(key1 = true) {
                 viewModel.getPhotos()
             }
-//            installSplashScreen().apply {
-//                setKeepOnScreenCondition {
-//                    viewModel.loadingFlow.value
-//                }
-//            }
+
             val photos = remember { mutableStateOf(listOf(UnsplashImages())) }
 //            LaunchedEffect(key1 = Unit )
 //            {
@@ -116,7 +115,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                    // Test()
-
                     MainScreen(
                         darkTheme,
                         photos.value,
@@ -150,36 +148,7 @@ fun Context.findActivity(): Activity? = when (this) {
 }
 @Composable
 fun Test() {
-    val state = rememberLazyListState()
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(
-                    bottom = 75.dp
-                ),
-            state = state,
-            verticalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-            item {
-                LazyRow( )
-                {
-                    item{
-                        //lazycolumn()
-                    }
-                }
 
-            }
-            items(10) {
-                Box(
-                    modifier = Modifier
-                        .background(Color.Red)
-                        .fillMaxWidth()
-                        .height(100.dp)
-                )
-            }
-        }
 }
 @Composable
 fun lazycolumn() {

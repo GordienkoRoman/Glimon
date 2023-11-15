@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -47,10 +48,13 @@ import stud.gilmon.presentation.theme.TextFieldLabelColor
 fun FeedScreen(
     photos: List<UnsplashImages>,
     factory:ViewModelFactory,
-    onSearckClick: () -> Unit
+    onSearckClick: () -> Unit,
+    onItemClick: (Int)->Unit
 ) {
     val viewModel:FeedViewModel =  viewModel(factory = factory)
-    viewModel.setPhotos(photos)
+    SideEffect {
+        viewModel.setPhotos(photos)
+    }
     Column() {
 
         SearchBar(userlocation = "",onSearckClick)
@@ -67,7 +71,9 @@ fun FeedScreen(
         ) {
             items(photos.size)
             {
-                FeedItem(photos[it])
+                FeedItemComponent(photos[it],
+                    onItemClick=onItemClick,
+                    index = it)
             }
 
 

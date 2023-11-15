@@ -116,7 +116,6 @@ fun ReviewsStatusBottomSheet(
 ) {
     if (showModalBottomSheet.value)
         CustomBottomSheetContainer(
-            showModalBottomSheet = showModalBottomSheet,
             onDismissRequest = { showModalBottomSheet.value = false }) {
             CustomList(listOf("All", "Positive", "Negative"), option, showModalBottomSheet)
         }
@@ -127,7 +126,6 @@ fun ReviewsStatusBottomSheet(
 fun SortTypeBottomSheet(showModalBottomSheet: MutableState<Boolean>, option: MutableState<String>) {
     if (showModalBottomSheet.value)
         CustomBottomSheetContainer(
-            showModalBottomSheet = showModalBottomSheet,
             onDismissRequest = { showModalBottomSheet.value = false }) {
             CustomList(listOf("By new", "By old", "By usefulness"), option, showModalBottomSheet)
         }

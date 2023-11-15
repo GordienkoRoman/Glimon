@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -39,18 +41,19 @@ import stud.gilmon.presentation.theme.TextFieldLabelColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomBottomSheetContainer(
-    showModalBottomSheet: MutableState<Boolean>,
     onDismissRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
 
     val skipPartially by remember { mutableStateOf(true) }
-    val bottomSheetState = rememberModalBottomSheetState(skipPartially)
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartially)
 
-    androidx.compose.material3.ModalBottomSheet(
+
+   ModalBottomSheet(
         containerColor = MaterialTheme.colorScheme.onBackground,
         onDismissRequest = { onDismissRequest() },
         sheetState = bottomSheetState,
+        scrimColor = BottomSheetDefaults.ScrimColor,
         windowInsets = WindowInsets.safeDrawing,
         dragHandle = { CustomDragHandle() },
     )
@@ -63,58 +66,7 @@ fun CustomBottomSheetContainer(
                 .background(MaterialTheme.colorScheme.onBackground),
             horizontalAlignment = CenterHorizontally
         ) {
-
-
             content()
-
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ChangeBottomSheetContainer(
-    showModalBottomSheet: MutableState<Boolean>,
-    onDismissRequest: () -> Unit,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    val scope = rememberCoroutineScope()
-    val skipPartially by remember { mutableStateOf(true) }
-    val bottomSheetState = rememberModalBottomSheetState(skipPartially)
-
-    androidx.compose.material3.ModalBottomSheet(
-        containerColor = MaterialTheme.colorScheme.onBackground,
-        onDismissRequest = { onDismissRequest() },
-        sheetState = bottomSheetState,
-        windowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom),
-        dragHandle = { CustomDragHandle() },
-    )
-    {
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
-                .padding(bottom = 60.dp, start = 10.dp, end = 10.dp)
-                .background(MaterialTheme.colorScheme.onBackground),
-            horizontalAlignment = CenterHorizontally
-        ) {
-            Text(
-                text = "Choose coupon status",
-                color = Color.LightGray,
-                modifier = Modifier.padding(vertical = 15.dp)
-
-            )
-            Divider(thickness = 1.dp, color = Color.LightGray)
-            content()
-            CustomCancelButton(
-                text = "Cancel"
-            ) {
-                scope.launch { bottomSheetState.hide() }.invokeOnCompletion {
-                    if (!bottomSheetState.isVisible) {
-                        showModalBottomSheet.value = false
-                    }
-                }
-            }
         }
     }
 }

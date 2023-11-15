@@ -56,7 +56,6 @@ import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
 import stud.gilmon.data.local.entities.UsersEntity
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     darkTheme: Boolean,
@@ -187,7 +186,7 @@ fun ProfileTopBar(
 ) {
 
     val selectedImageUri = rememberSaveable { mutableStateOf("") }
-    val painter = rememberAsyncImagePainter(model =selectedImageUri.value.ifEmpty { R.drawable.genuine_beauty })
+    val painter = rememberAsyncImagePainter(model =selectedImageUri.value.ifEmpty { R.drawable.img })
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->

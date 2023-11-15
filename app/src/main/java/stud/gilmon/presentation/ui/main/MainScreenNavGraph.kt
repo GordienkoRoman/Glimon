@@ -21,6 +21,8 @@ import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.remote.UnsplashImages
 import stud.gilmon.presentation.ui.Screen
 import stud.gilmon.presentation.ui.Screen.Companion.KEY_AUTH_USER
+import stud.gilmon.presentation.ui.Screen.Companion.KEY_FEED_ITEM_INDEX
+import stud.gilmon.presentation.ui.feed.FeedItemScreen.FeedItemScreen
 import stud.gilmon.presentation.ui.feed.FeedScreen
 import stud.gilmon.presentation.ui.feed.FeedSearchScreen
 import stud.gilmon.presentation.ui.profile.ProfileScreen
@@ -47,7 +49,9 @@ fun MainScreenNavGraph(
             startDestination = Screen.FeedMain.route){
             composable(route = Screen.FeedMain.route)
             {
-                FeedScreen(photos,viewModelFactory){navController.navigate(Screen.FeedSearch.route) }
+                FeedScreen(photos,viewModelFactory,
+                    onSearckClick = {navController.navigate(Screen.FeedSearch.route) },
+                    onItemClick =  {navController.navigate(Screen.FeedItem.route+"/"+it) })
             }
             composable(route = Screen.FeedSearch.route,
                 enterTransition = {
@@ -72,7 +76,33 @@ fun MainScreenNavGraph(
                 }
             )
             {
-                FeedSearchScreen(viewModelFactory)
+                FeedSearchScreen(viewModelFactory,photos)
+            }
+            composable(route ="${Screen.FeedItem.route}/{$KEY_FEED_ITEM_INDEX}",
+                enterTransition = {
+                    fadeIn(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    )
+                },
+                exitTransition = {
+                    fadeOut(
+                        animationSpec = tween(
+                            300, easing = LinearEasing
+                        )
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(300, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.End
+                    )
+                }
+            )
+            {
+                val index = it.arguments?.getString(KEY_FEED_ITEM_INDEX) ?: ""
+                FeedItemScreen(viewModelFactory,photos[index.toInt()])
             }
         }
 

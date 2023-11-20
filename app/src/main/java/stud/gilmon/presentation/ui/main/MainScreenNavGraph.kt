@@ -50,8 +50,9 @@ fun MainScreenNavGraph(
             composable(route = Screen.FeedMain.route)
             {
                 FeedScreen(photos,viewModelFactory,
-                    onSearckClick = {navController.navigate(Screen.FeedSearch.route) },
-                    onItemClick =  {navController.navigate(Screen.FeedItem.route+"/"+it) })
+                    user.value,
+                    onSearckClick = {navController.navigate(Screen.FeedSearch.route) }
+                ) { navController.navigate(Screen.FeedItem.route + "/" + it) }
             }
             composable(route = Screen.FeedSearch.route,
                 enterTransition = {
@@ -102,7 +103,7 @@ fun MainScreenNavGraph(
             )
             {
                 val index = it.arguments?.getString(KEY_FEED_ITEM_INDEX) ?: ""
-                FeedItemScreen(viewModelFactory,photos[index.toInt()])
+                FeedItemScreen(user.value,viewModelFactory,photos[index.toInt()])
             }
         }
 

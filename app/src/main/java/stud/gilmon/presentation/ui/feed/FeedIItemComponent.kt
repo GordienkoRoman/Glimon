@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import stud.gilmon.R
+import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.model.FeedItem
 import stud.gilmon.data.remote.UnsplashImages
 import stud.gilmon.presentation.components.CustomText
@@ -35,7 +36,6 @@ import stud.gilmon.presentation.components.LabelText
 @Composable
 fun FeedItemComponent(
     photo: UnsplashImages = UnsplashImages(),
-    modifier: Modifier = Modifier,
     onItemClick: (Int) -> Unit = {},
     index: Int
 ) {

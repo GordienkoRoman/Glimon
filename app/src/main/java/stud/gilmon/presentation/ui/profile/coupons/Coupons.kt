@@ -1,17 +1,23 @@
 package stud.gilmon.presentation.ui.profile.coupons
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,28 +31,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.SubcomposeAsyncImage
+import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
+import stud.gilmon.data.model.FeedItem
+import stud.gilmon.data.remote.Location
+import stud.gilmon.data.remote.UnsplashImages
+import stud.gilmon.data.remote.Urls
 import stud.gilmon.presentation.components.CustomBottomSheetContainer
 import stud.gilmon.presentation.components.CustomList
+import stud.gilmon.presentation.components.CustomText
+import stud.gilmon.presentation.components.LabelText
 import stud.gilmon.presentation.components.SelectButton
+import stud.gilmon.presentation.ui.Screen
+import stud.gilmon.presentation.ui.feed.FeedItemBottom
+import stud.gilmon.presentation.ui.feed.FeedItemComponent
 import stud.gilmon.presentation.ui.profile.TOP_NAVIGATION_BAR_HEICHT
 
 
 @Composable
-fun CouponsProfile(lazyListState: LazyListState) {
+fun CouponsProfile(lazyListState: LazyListState,factory:ViewModelFactory) {
 
-    val viewModel: CouponsViewModel = viewModel()
+    val viewModel: CouponsViewModel = viewModel(factory = factory )
     val couponStatus = rememberSaveable { mutableStateOf("All") }
     val sortType = rememberSaveable { mutableStateOf("By new") }
     val screenState = viewModel.screenState.collectAsState(CouponsScreenState.Initial)
     val showCouponStatusBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showSortTypeBottomSheet = rememberSaveable { mutableStateOf(false) }
     CopunsStatusBottomSheet(showCouponStatusBottomSheet, couponStatus)
-
+    val currentState = screenState.value
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -79,9 +98,11 @@ fun CouponsProfile(lazyListState: LazyListState) {
                 showSortTypeBottomSheet.value = !showSortTypeBottomSheet.value
             }
         }
-        items(20) {
+        item{
             Column(
-                Modifier.clip(shape = RoundedCornerShape(20.dp)).fillMaxSize()
+                Modifier
+                    .clip(shape = RoundedCornerShape(20.dp))
+                    .fillMaxSize()
                     .background(MaterialTheme.colorScheme.onBackground)
                     ,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,11 +121,73 @@ fun CouponsProfile(lazyListState: LazyListState) {
                 )
             }
         }
+        if(currentState is CouponsScreenState.Coupons)
+        {
+            items(
+                currentState.coupons.size
+            )
+            {
+                val feedItem = currentState.coupons[it]
+                CouponItem(feedItem = feedItem)
+
+            }
+        }
+
     }
     SortTypeBottomSheet(showSortTypeBottomSheet, sortType)
 
 }
 
+@Preview
+@Composable
+fun test() {
+    CouponItem(FeedItem("123","123","123","123",""))
+}
+@Composable
+fun CouponItem(feedItem: FeedItem)
+{
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { },
+        shape = RoundedCornerShape(20.dp)
+    ) {
+
+
+        Column(
+            modifier = Modifier
+                .clickable { }
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.onBackground)
+                .padding(horizontal = 15.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+        ) {
+            LabelText(text = feedItem.companyName)
+            CustomText(text = feedItem.promotionName)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            ) {
+                SubcomposeAsyncImage(
+                    model = feedItem.imgUrl,
+                    contentDescription = "",
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop,
+                    loading = {
+                        CircularProgressIndicator()
+                    }
+                )
+            }
+
+            CustomText(text = feedItem.description)
+            CustomText(text = feedItem.location)
+        }
+        Divider(thickness = 1.dp, color = Color.DarkGray)
+
+       // FeedItemBottom(photo)
+    }
+}
 @Composable
 fun CopunsStatusBottomSheet(
     showModalBottomSheet: MutableState<Boolean>,

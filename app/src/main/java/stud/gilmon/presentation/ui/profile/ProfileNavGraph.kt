@@ -33,7 +33,7 @@ fun ProfileNavGraph(
     )
     {
         composable(route = ProfileDestinations.CouponsProfile.route) {
-            CouponsProfile(lazyListStateList[0])
+            CouponsProfile(lazyListStateList[0],viewModelFactory)
         }
         composable(route = ProfileDestinations.ReviewsProfile.route) {
             ReviewsProfile(lazyListStateList[0])

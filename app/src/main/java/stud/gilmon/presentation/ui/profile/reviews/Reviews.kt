@@ -43,7 +43,7 @@ import stud.gilmon.presentation.ui.profile.isScrolled
 
 @Composable
 fun ReviewsProfile(lazyListState: LazyListState) {
-    val viewModel: CouponsViewModel = viewModel()
+    val viewModel: ReviewsViewModel = viewModel()
     val reviewsStatus = rememberSaveable { mutableStateOf("All") }
     val sortType = rememberSaveable { mutableStateOf("By new") }
     val screenState = viewModel.screenState.collectAsState(CouponsScreenState.Initial)

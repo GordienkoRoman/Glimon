@@ -24,6 +24,7 @@ import stud.gilmon.presentation.ui.feed.FeedItemScreen.FeedItemViewModel
 import stud.gilmon.presentation.ui.feed.FeedViewModel
 import stud.gilmon.presentation.ui.login.LoginViewModel
 import stud.gilmon.presentation.ui.profile.ProfileViewModel
+import stud.gilmon.presentation.ui.profile.coupons.CouponsViewModel
 import stud.gilmon.presentation.ui.profile.settings.SettingsViewModel
 import timber.log.Timber
 import javax.inject.Scope
@@ -134,4 +135,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(FeedItemViewModel::class)
     fun bindFeedItemViewModel(viewModel: FeedItemViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CouponsViewModel::class)
+    fun bindCouponsViewModel(viewModel: CouponsViewModel): ViewModel
 }

@@ -26,7 +26,7 @@ private val DarkColorScheme = darkColorScheme(
     onSecondary = Color.White,
     onTertiary = Color.White,
     onBackground = Color(0xFF1C1C1C),
-    onSurface = Color(0xFF161616),
+    onSurface = TextFieldContainerColor,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -39,7 +39,7 @@ private val LightColorScheme = lightColorScheme(
     onSecondary = Color.White,
     onTertiary = Color.White,
     onBackground = Color(0xFF1C1C1C),
-    onSurface = Color(0xFF161616),
+    onSurface = Color.White,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

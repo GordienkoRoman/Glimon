@@ -27,6 +27,7 @@ fun CustomTextField(
     value: String = "",
     readOnly: Boolean = false,
     label: String = "label",
+    minLines:Int =1,
     onValueChange: (String) -> Unit = {}
 ) {
     TextField(
@@ -37,8 +38,8 @@ fun CustomTextField(
         colors = TextFieldDefaults.colors(
             unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
             focusedTextColor = MaterialTheme.colorScheme.onSecondary,
-            focusedContainerColor = TextFieldContainerColor,
-            unfocusedContainerColor = TextFieldContainerColor,
+            focusedContainerColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.onSurface,
             disabledIndicatorColor = Color.Transparent,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
@@ -48,6 +49,7 @@ fun CustomTextField(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(10.dp),
+        minLines = minLines
     )
 }
 @Composable
@@ -79,10 +81,10 @@ fun CustomTextField2(
     )
 }
 @Composable
-fun CustomText(text: String, modifier: Modifier = Modifier, fontSize: TextUnit = TextUnit.Unspecified) {
+fun CustomText(text: String, modifier: Modifier = Modifier, fontSize: TextUnit = TextUnit.Unspecified,textColor:Color = Color.White) {
     Text(
         text,
-        color = Color.White,
+        color = textColor,
         modifier = modifier.padding(
             horizontal = 15.dp
         ),

@@ -10,4 +10,5 @@
     <string name="profile_coupons">Coupons</string>
     <string name="auth_canceled">auth_canceled</string>
     <string name="get_user_error">get error</string>
+    <string name="main_friends">Friends</string>
 </resources>

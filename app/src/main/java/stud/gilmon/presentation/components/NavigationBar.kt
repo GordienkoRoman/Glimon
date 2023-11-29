@@ -3,8 +3,11 @@ package stud.gilmon.presentation.components
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -23,12 +26,13 @@ fun CustomNavigationBar(
     content: @Composable RowScope.() -> Unit
 ) {
     Surface(
-        color = Color.LightGray,
-        contentColor = Color.Blue,
+        color = MaterialTheme.colorScheme.onBackground,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         tonalElevation = tonalElevation,
         modifier = modifier
-            .padding(bottom = 50.dp, start = 50.dp,end = 50.dp)
-            .clip(shape = RoundedCornerShape(15.dp))
+            .padding(bottom = 30.dp, start = 70.dp,end = 70.dp)
+            .height(50.dp)
+            .clip(shape = RoundedCornerShape(25.dp))
     ) {
         Row(
             modifier = Modifier,

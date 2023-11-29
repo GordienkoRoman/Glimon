@@ -1,8 +1,8 @@
 package stud.gilmon
 
 import android.app.Application
-import stud.gilmon.di.AppComponent
-import stud.gilmon.di.DaggerAppComponent
+import stud.gilmon.di.components.AppComponent
+import stud.gilmon.di.components.DaggerAppComponent
 import timber.log.Timber
 
 

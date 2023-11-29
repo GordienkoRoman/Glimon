@@ -22,15 +22,11 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -47,7 +43,7 @@ import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
 import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.remote.UnsplashImages
-import stud.gilmon.presentation.components.ChangeLocationBottomSheet
+import stud.gilmon.presentation.bottomSheets.ChangeLocationBottomSheet
 import stud.gilmon.presentation.components.CustomButton
 import stud.gilmon.presentation.components.SelectButton
 import stud.gilmon.presentation.components.TwoRowsTopAppBar
@@ -75,19 +71,12 @@ fun FeedScreen(
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior2.nestedScrollConnection),
         topBar =  {
-            CenterAlignedTopAppBar(
+            TwoRowsTopAppBar(
                 title = {
-                    SelectButton(
-                        labelText = "Show promotions in",
-                        text = "location.value",
-                        icon = Icons.Filled.LocationOn,
-                        containerColor = TextFieldContainerColor
-                    )
-                    {
-                        showChooseLocationBottomSheet.value = !showChooseLocationBottomSheet.value
-                    }
-                    //    Text(text = "!@$%^&*()")
+                     SearchBar(userlocation = "",onSearckClick)
                 },
+                pinnedHeight =60.dp,
+                maxHeight = 250.dp,
                 scrollBehavior = scrollBehavior2
             )
         }
@@ -95,15 +84,13 @@ fun FeedScreen(
         Scaffold(
             modifier = Modifier
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .fillMaxSize()
                 .padding(it),
             topBar =  {
                 TwoRowsTopAppBar(
-                    title = {
-                        SearchBar(userlocation = "",onSearckClick)
-                        //   Text(text = "!@$%^&*()")
-                    },
-                    pinnedHeight =64.dp,
-                    maxHeight = 200.dp,
+                    title = {},
+                    pinnedHeight =0.dp,
+                    maxHeight = 1.dp,
                     scrollBehavior = scrollBehavior
                 )
             }
@@ -114,11 +101,10 @@ fun FeedScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(bottom = it.calculateBottomPadding()),
-                contentPadding = PaddingValues(   bottom = 75.dp,top = 100.dp, start = 15.dp, end = 15.dp),
+                contentPadding = PaddingValues(   bottom = 75.dp,top = 30.dp, start = 15.dp, end = 15.dp),
                 /*   .windowInsetsTopHeight(WindowInsets.safeDrawing)*/
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-
                 items(photos.size)
                 { index ->
                     FeedItemComponent(photos[index],
@@ -135,23 +121,28 @@ fun FeedScreen(
     ) {
         showChooseLocationBottomSheet.value = false
     }
+}
 
 
-
-    }
-
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(userlocation: String,onSearckClick:()->Unit) {
+    val showChooseLocationBottomSheet = rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.onBackground)
             .padding(15.dp)
             .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-
+        SelectButton(
+            labelText = "Show promotions in",
+            text = "location.value",
+            icon = Icons.Filled.LocationOn,
+            containerColor = TextFieldContainerColor
+        )
+        {
+            showChooseLocationBottomSheet.value = !showChooseLocationBottomSheet.value
+        }
         Button(
             onClick = {onSearckClick()},
             colors = ButtonDefaults.buttonColors(
@@ -166,7 +157,7 @@ fun SearchBar(userlocation: String,onSearckClick:()->Unit) {
                 modifier = Modifier.size(26.dp),
                 imageVector = Icons.Filled.Search,
                 contentDescription = null,
-                tint = Color.White
+                tint = TextFieldLabelColor
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
@@ -198,7 +189,7 @@ fun SearchBar(userlocation: String,onSearckClick:()->Unit) {
             LazyRow(horizontalArrangement = spacedBy(10.dp)) {
                 items(10) {
                     CustomButton(
-                       text ="button$it",
+                        text ="button$it",
                         containerColor = TextFieldContainerColor
                     ) {
 
@@ -207,7 +198,4 @@ fun SearchBar(userlocation: String,onSearckClick:()->Unit) {
             }
         }
     }
-
-
-
 }

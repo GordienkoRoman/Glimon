@@ -79,7 +79,6 @@ class MainActivity : ComponentActivity() {
             val scope = rememberCoroutineScope()
             val login = remember { mutableStateOf("") }
             val user = remember { mutableStateOf(UsersEntity(userId = "", reviewId = 1)) }
-           // val viewModel: MainViewModel = viewModel(factory = viewModelFactory)
             viewModel.readFromDataStore.observe(this) {
                 login.value = it.toString()
                 user.value = viewModel.getUser(it.toString()) ?: user.value.copy()

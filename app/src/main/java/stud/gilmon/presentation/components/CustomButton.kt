@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import stud.gilmon.presentation.theme.RedGlimon
 import stud.gilmon.presentation.theme.SpacerColor
 import stud.gilmon.presentation.theme.TextFieldLabelColor
 
@@ -127,7 +128,7 @@ fun SelectButton(
                 modifier = Modifier.size(26.dp),
                 imageVector = icon,
                 contentDescription = null,
-                tint = Color.Red
+                tint = RedGlimon
             )
             Spacer(modifier = Modifier.width(10.dp))
         }

@@ -28,8 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -42,6 +45,7 @@ import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.remote.UnsplashImages
 import stud.gilmon.presentation.components.CustomDragHandle
 import stud.gilmon.presentation.components.CustomNavigationBar
+import stud.gilmon.presentation.theme.TextFieldLabelColor
 import stud.gilmon.presentation.ui.Screen
 import stud.gilmon.presentation.ui.login.LoginScreen
 
@@ -106,19 +110,18 @@ fun MainBottomAppBar(
     user: MutableState<UsersEntity>,
     scaffoldState: BottomSheetScaffoldState
 ) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var iconColor: MutableState<Color> = remember {
+        mutableStateOf(TextFieldLabelColor)
+    }
     val tabs = MainTab.values()
+    var selectedTab by remember { mutableIntStateOf(tabs[0].title) }
     val scope = rememberCoroutineScope()
-    CustomNavigationBar(
-        Modifier.windowInsetsBottomHeight(
-            WindowInsets.navigationBars.add(WindowInsets(bottom = 80.dp))
-        )
-    ) {
+    CustomNavigationBar{
         tabs.forEach { tab ->
             NavigationBarItem(
-                icon = { Icon(imageVector = tab.icon, contentDescription = null) },
+                icon = { Icon(painter = painterResource(tab.icon), contentDescription = null, tint = if (tab.title == selectedTab) MaterialTheme.colorScheme.tertiary else TextFieldLabelColor) },
                 colors = NavigationBarItemDefaults.colors(
-
+                   indicatorColor =  MaterialTheme.colorScheme.onBackground,
                 ),
                 selected = tab.title == selectedTab,
                 onClick = {
@@ -126,6 +129,7 @@ fun MainBottomAppBar(
                     val route: String = when (tab) {
                         MainTab.SUPPORT -> Screen.SupportMain.route
                         MainTab.FEED -> Screen.FeedMain.route
+                        MainTab.FRIENDS->Screen.SupportMain.route
                         MainTab.PROFILE -> {
                             if (user.value.userId == "") {
                                 Screen.Profile.route + "/"
@@ -152,12 +156,12 @@ fun MainBottomAppBar(
 
 enum class MainTab(
     @StringRes val title: Int,
-    val icon: ImageVector
+    val icon: Int
 ) {
-    FEED(R.string.main_feed, Icons.Filled.Search),
-    SUPPORT(R.string.main_support, Icons.Filled.ThumbUp),
-    PROFILE(R.string.main_profile, Icons.Filled.AccountBox);
-    // EXTRA( R.string.main_profile, Icons.Filled.AddCircle);
+    FEED(R.string.main_feed, R.drawable.baseline_search_24),
+    SUPPORT(R.string.main_support, R.drawable.baseline_help_24),
+    PROFILE(R.string.main_profile, R.drawable.baseline_person_24),
+    FRIENDS(R.string.main_friends, R.drawable.baseline_people_24);
 
     companion object {
         fun getTabFromResource(@StringRes resource: Int): MainTab {

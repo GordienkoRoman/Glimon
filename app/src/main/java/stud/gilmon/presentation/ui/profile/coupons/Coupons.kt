@@ -98,29 +98,7 @@ fun CouponsProfile(lazyListState: LazyListState,factory:ViewModelFactory) {
                 showSortTypeBottomSheet.value = !showSortTypeBottomSheet.value
             }
         }
-        item{
-            Column(
-                Modifier
-                    .clip(shape = RoundedCornerShape(20.dp))
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.onBackground)
-                    ,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.blank_paper_icon),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(50.dp)
-                )
-                Text(
-                    text = "Empty list",
-                    fontSize = 30.sp,
-                    color = Color.White
-                )
-            }
-        }
+
         if(currentState is CouponsScreenState.Coupons)
         {
             items(
@@ -132,17 +110,38 @@ fun CouponsProfile(lazyListState: LazyListState,factory:ViewModelFactory) {
 
             }
         }
+        else
+        {
+            item{
+                Column(
+                    Modifier
+                        .clip(shape = RoundedCornerShape(20.dp))
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.onBackground)
+                    ,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.blank_paper_icon),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(50.dp)
+                    )
+                    Text(
+                        text = "Empty list",
+                        fontSize = 30.sp,
+                        color = Color.White
+                    )
+                }
+            }
+        }
 
     }
     SortTypeBottomSheet(showSortTypeBottomSheet, sortType)
 
 }
 
-@Preview
-@Composable
-fun test() {
-    CouponItem(FeedItem("123","123","123","123",""))
-}
 @Composable
 fun CouponItem(feedItem: FeedItem)
 {
@@ -152,14 +151,12 @@ fun CouponItem(feedItem: FeedItem)
             .clickable { },
         shape = RoundedCornerShape(20.dp)
     ) {
-
-
         Column(
             modifier = Modifier
                 .clickable { }
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.onBackground)
-                .padding(horizontal = 15.dp, vertical = 20.dp),
+                .padding(10.dp),
             verticalArrangement = Arrangement.spacedBy(15.dp),
         ) {
             LabelText(text = feedItem.companyName)
@@ -179,7 +176,6 @@ fun CouponItem(feedItem: FeedItem)
                     }
                 )
             }
-
             CustomText(text = feedItem.description)
             CustomText(text = feedItem.location)
         }

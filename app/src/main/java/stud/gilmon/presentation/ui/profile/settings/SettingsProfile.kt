@@ -41,11 +41,11 @@ import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.launch
 import stud.gilmon.data.local.entities.UsersEntity
-import stud.gilmon.presentation.components.ChangeEmailBottomSheet
-import stud.gilmon.presentation.components.ChangePasswordBottomSheet
-import stud.gilmon.presentation.components.ChangePhoneNumberBottomSheet
-import stud.gilmon.presentation.components.ChooseFamilyStatusBottomSheet
-import stud.gilmon.presentation.components.ChooseGenderBottomSheet
+import stud.gilmon.presentation.bottomSheets.ChangeEmailBottomSheet
+import stud.gilmon.presentation.bottomSheets.ChangePasswordBottomSheet
+import stud.gilmon.presentation.bottomSheets.ChangePhoneNumberBottomSheet
+import stud.gilmon.presentation.bottomSheets.ChooseFamilyStatusBottomSheet
+import stud.gilmon.presentation.bottomSheets.ChooseGenderBottomSheet
 import stud.gilmon.presentation.components.CustomButton
 import stud.gilmon.presentation.components.CustomTextField
 import stud.gilmon.presentation.components.LabelText

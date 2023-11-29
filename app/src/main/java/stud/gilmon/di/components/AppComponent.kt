@@ -1,31 +1,24 @@
-package stud.gilmon.di
+package stud.gilmon.di.components
 
 import android.content.Context
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.lifecycle.ViewModel
-import com.example.dog_observer.viewModelFactory.ViewModelKey
-import dagger.Binds
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
 import dagger.Provides
-import dagger.multibindings.IntoMap
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import stud.gilmon.MainActivity
-import stud.gilmon.MainViewModel
 import stud.gilmon.data.remote.UnsplashApi
 import stud.gilmon.data.remote.network.AuthorizationInterceptor
 import stud.gilmon.data.remote.userApi.GithubApi
 import stud.gilmon.data.remote.userApi.MailApi
-import stud.gilmon.presentation.ui.feed.FeedItemScreen.FeedItemViewModel
-import stud.gilmon.presentation.ui.feed.FeedViewModel
-import stud.gilmon.presentation.ui.login.LoginViewModel
-import stud.gilmon.presentation.ui.profile.ProfileViewModel
-import stud.gilmon.presentation.ui.profile.coupons.CouponsViewModel
-import stud.gilmon.presentation.ui.profile.settings.SettingsViewModel
+import stud.gilmon.di.modules.DataBaseModule
+import stud.gilmon.di.modules.DataStoreModule
+import stud.gilmon.di.modules.DispatcherModule
+import stud.gilmon.di.modules.ViewModelModule
 import timber.log.Timber
 import javax.inject.Scope
 
@@ -44,6 +37,7 @@ interface AppComponent {
     @OptIn(ExperimentalMaterial3Api::class)
     fun inject(mainActivity: MainActivity)
 
+    fun profileScreenComponentFactory():ProfileScreenComponent.Factory
     @Component.Factory
     interface Factory {
 
@@ -104,40 +98,3 @@ class AppModule {
 
 }
 
-@Module
-interface ViewModelModule {
-    @Binds
-    @IntoMap
-    @ViewModelKey(SettingsViewModel::class)
-    fun bindSettingsViewModel(viewModel: SettingsViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ProfileViewModel::class)
-    fun bindProfileViewModel(viewModel: ProfileViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(LoginViewModel::class)
-    fun bindLoginViewModel(viewModel: LoginViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(MainViewModel::class)
-    fun bindMainViewModel(viewModel: MainViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(FeedViewModel::class)
-    fun bindFeedViewModel(viewModel: FeedViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(FeedItemViewModel::class)
-    fun bindFeedItemViewModel(viewModel: FeedItemViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(CouponsViewModel::class)
-    fun bindCouponsViewModel(viewModel: CouponsViewModel): ViewModel
-}

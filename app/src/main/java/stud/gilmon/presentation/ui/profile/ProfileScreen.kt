@@ -32,6 +32,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -43,7 +44,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,8 +56,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import stud.gilmon.BaseApplication
 import stud.gilmon.R
 import stud.gilmon.data.local.entities.UsersEntity
+import stud.gilmon.presentation.components.CustomText
+import stud.gilmon.presentation.theme.TextFieldLabelColor
 
 @Composable
 fun ProfileScreen(
@@ -62,9 +68,13 @@ fun ProfileScreen(
     user: MutableState<UsersEntity>,
     navController: NavHostController = rememberNavController(),
     toggleTheme: () -> Unit,
-    viewModelFactory: ViewModelFactory,
     onClick: () -> Unit
 ) {
+    val component =
+        (LocalContext.current.applicationContext as BaseApplication).component
+            .profileScreenComponentFactory()
+            .create(user.value.userId)
+    val viewModelFactory = component.getViewModelFactory()
     val viewModel: ProfileViewModel = viewModel(factory = viewModelFactory)
     val lazyListStateList: List<LazyListState> = listOf(
         rememberLazyListState(),
@@ -72,13 +82,13 @@ fun ProfileScreen(
         rememberLazyListState()
     )
     //val  user = viewModel.getUser(login)
-    mainContent(
+    MainContent(
         darkTheme = darkTheme,
         user = user,
         navController = navController,
         toggleTheme = { toggleTheme() },
         viewModelFactory = viewModelFactory,
-        viewModel =viewModel,
+        viewModel = viewModel,
         lazyListStateList,
         onClick = onClick
     )
@@ -86,8 +96,9 @@ fun ProfileScreen(
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun mainContent(
+fun MainContent(
     darkTheme: Boolean,
     user: MutableState<UsersEntity>,
     navController: NavHostController,
@@ -98,13 +109,30 @@ fun mainContent(
     onClick: () -> Unit
 ) {
 
-    val topPadding by animateDpAsState(
-        targetValue = if (lazyListStateList[0].isScrolled||
-                lazyListStateList[1].isScrolled||
-                lazyListStateList[2].isScrolled) 0.dp else TOP_BAR_HEIGHT,
-        animationSpec = tween(durationMillis = 300)
-    )
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior2 = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+//    val topPadding by animateDpAsState(
+//        targetValue = if (lazyListStateList[0].isScrolled ||
+//            lazyListStateList[1].isScrolled ||
+//            lazyListStateList[2].isScrolled
+//        ) 0.dp else TOP_BAR_HEIGHT,
+//        animationSpec = tween(durationMillis = 300), label = ""
+//    )
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior2.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                modifier = Modifier.fillMaxWidth(), title = {
+                    ProfileTopBar(
+                        //  lazyListStateList = lazyListStateList,
+                        user,
+                        viewModel
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.onBackground),
+                scrollBehavior = scrollBehavior2
+            )
+        },
         content = { paddingValues ->
             Box(
                 modifier = Modifier
@@ -112,7 +140,6 @@ fun mainContent(
                     .padding(paddingValues)
             ) {
                 Scaffold(
-                    modifier = Modifier.padding(top = topPadding),
                     topBar = { ProfileTopNavigationBar(navController = navController) },
                     contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Bottom)
                 ) {
@@ -127,7 +154,7 @@ fun mainContent(
                         onClick
                     )
                 }
-                ProfileTopBar(lazyListStateList = lazyListStateList, user,viewModel)
+
             }
         }
     )
@@ -149,7 +176,7 @@ fun ProfileTopNavigationBar(navController: NavController) {
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = MaterialTheme.colorScheme.onBackground,
                 ),
-                icon = { },
+                icon = {},
                 label = {
                     Text(
                         text = stringResource(tab.title),
@@ -180,63 +207,57 @@ fun ProfileTopNavigationBar(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTopBar(
-    lazyListStateList: List<LazyListState>,
     user: MutableState<UsersEntity>,
     viewModel: ProfileViewModel
 ) {
 
     val selectedImageUri = rememberSaveable { mutableStateOf("") }
-    val painter = rememberAsyncImagePainter(model =selectedImageUri.value.ifEmpty { R.drawable.img })
+    val painter =
+        rememberAsyncImagePainter(model = selectedImageUri.value.ifEmpty { R.drawable.img })
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
             selectedImageUri.value = uri.toString()
-          //  user.value = user.value.copy(avatarUrl = uri.toString())
-        viewModel.updateUserData(user.value.copy(avatarUrl = uri.toString()))}
+            //  user.value = user.value.copy(avatarUrl = uri.toString())
+            viewModel.updateUserData(user.value.copy(avatarUrl = uri.toString()))
+        }
     )
-    TopAppBar(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize(animationSpec = tween(durationMillis = 300))
+            .background(MaterialTheme.colorScheme.onBackground)
             .height(
-                height = if (lazyListStateList[0].isScrolled ||
-                    lazyListStateList[1].isScrolled ||
-                    lazyListStateList[2].isScrolled
-                ) 0.dp else TOP_BAR_HEIGHT
-            ),
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.onBackground
-        ),
-        title = {
-            Row()
-            {
-                Text(
-                    "Hi, ${user.value.firstName} ${user.value.lastName}",
-                    fontSize = 30.sp,
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(
-                            horizontal = 15.dp
-                        )
-                        .weight(1f)
-                )
-                Image(painter = painter,
-                    modifier = Modifier
-                        .size(70.dp)
-                        .clip(CircleShape)
-                        .clickable(
-                            onClick = {
-                                singlePhotoPickerLauncher.launch(
-                                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                                )
-                            }
-                        ),
-                    contentDescription = "god_beauty",
-                    contentScale = ContentScale.Crop)
-            }
-
-        }
+                TOP_BAR_HEIGHT
+            )
     )
+    {
+        Row()
+        {
+            CustomText(text = "Hi,\n", textColor = TextFieldLabelColor)
+            Text(
+                "${user.value.firstName} ${user.value.lastName}",
+                fontSize = 30.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .weight(1f)
+            )
+            Image(painter = painter,
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .clickable(
+                        onClick = {
+                            singlePhotoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
+                    ),
+                contentDescription = "god_beauty",
+                contentScale = ContentScale.Crop)
+        }
+
+    }
 }
 
 val TOP_BAR_HEIGHT = 80.dp
@@ -250,9 +271,4 @@ enum class ProfileTab(
     COUPONS(R.string.profile_coupons),
     REVIEWS(R.string.profile_reviews),
     SETTINGS(R.string.profile_settings);
-}
-
-@Composable
-fun selectImage() {
-
 }

@@ -2,7 +2,6 @@ package stud.gilmon.presentation.ui.login
 
 import android.content.Intent
 import android.net.Uri
-import android.view.Window
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -11,11 +10,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -38,14 +34,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
 import stud.gilmon.base.utils.launchAndCollectIn
@@ -56,8 +50,7 @@ import stud.gilmon.presentation.components.CustomTextField
 import stud.gilmon.presentation.components.LabelText
 import stud.gilmon.presentation.components.SocialNetworkIcon
 import stud.gilmon.presentation.theme.OrangeOdnoklassniki
-import stud.gilmon.presentation.theme.SpacerColor
-import stud.gilmon.presentation.theme.YellowButton
+import stud.gilmon.presentation.theme.YellowGlimon
 import stud.gilmon.presentation.ui.Screen
 
 @Composable
@@ -119,7 +112,7 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             {
-                CloseButton(scope, onClose)
+                CloseButton( onClose)
             }
         }
         CustomText(
@@ -142,7 +135,7 @@ fun LoginScreen(
 
                 },
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = YellowButton
+                    containerColor = YellowGlimon
                 ),
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier
@@ -204,7 +197,7 @@ fun handleAuthResponseIntent(intent: Intent, viewModel: LoginViewModel) {
 }
 
 @Composable
-fun CloseButton(scope: CoroutineScope, onClose: () -> Unit) {
+fun CloseButton( onClose: () -> Unit) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier

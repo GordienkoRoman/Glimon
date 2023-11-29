@@ -17,6 +17,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -26,7 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import stud.gilmon.R
-import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.model.FeedItem
 import stud.gilmon.data.remote.UnsplashImages
 import stud.gilmon.presentation.components.CustomText
@@ -40,13 +40,22 @@ fun FeedItemComponent(
     index: Int
 ) {
     val feedItem = remember {
-        mutableStateOf(FeedItem(
+        mutableStateOf(FeedItem("","","","",""
+//            companyName = photo.user.name ?: "name",
+//            promotionName = photo.user.name ?: "name",
+//            description = photo.description ?: photo.user.bio ?: "Description",
+//            location = photo.location.name ?: photo.user.location ?: "Location",
+//            imgUrl = photo.urls?.raw.toString()
+        ))
+    }
+    SideEffect {
+        feedItem.value=FeedItem(
             companyName = photo.user.name ?: "name",
             promotionName = photo.user.name ?: "name",
             description = photo.description ?: photo.user.bio ?: "Description",
             location = photo.location.name ?: photo.user.location ?: "Location",
             imgUrl = photo.urls?.raw.toString()
-        ))
+        )
     }
 
     Card(
@@ -75,7 +84,7 @@ fun FeedItemComponent(
                 .clickable { }
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.onBackground)
-                .padding(horizontal = 15.dp, vertical = 20.dp),
+                .padding(10.dp),
             verticalArrangement = Arrangement.spacedBy(15.dp),
         ) {
             LabelText(text = feedItem.value.companyName)
@@ -88,6 +97,7 @@ fun FeedItemComponent(
         FeedItemBottom(photo)
     }
 }
+
 
 
 @Composable

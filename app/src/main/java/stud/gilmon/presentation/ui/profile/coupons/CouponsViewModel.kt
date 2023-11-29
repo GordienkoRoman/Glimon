@@ -17,11 +17,12 @@ import javax.inject.Inject
 
 
 class CouponsViewModel @Inject constructor(
-    val roomRepository: RoomRepository
+    val roomRepository: RoomRepository,
+    val userId: String
 ) : ViewModel()
 {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-     val screenState = getCoupons("").map { CouponsScreenState.Coupons(coupons = it) }
+     val screenState = getCoupons(userId).map { CouponsScreenState.Coupons(coupons = it) }
 
      private fun getCoupons(userId:String): StateFlow<List<FeedItem>> = flow {
         val coupons = roomRepository.getCoupons(userId)

@@ -134,7 +134,6 @@ fun MainScreenNavGraph(
             ProfileScreen(
                 darkTheme, user = user,
                 toggleTheme = toggleTheme,
-                viewModelFactory = viewModelFactory
             ) { navController.navigate(Screen.FeedMain.route) }
         }
     }

@@ -149,7 +149,7 @@ fun EmptyList(){
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.blank_paper_icon),
+            imageVector = ImageVector.vectorResource(R.drawable.baseline_people_24),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSecondary,
             modifier = Modifier.size(50.dp)
@@ -186,7 +186,6 @@ fun ReviewItem(reviewItem: ReviewItem){
                     contentScale = ContentScale.Crop)
                 LabelText(text = reviewItem.feedItem.companyName)
             }
-            CustomText(text = reviewItem.feedItem.promotionName)
             CustomText(text = reviewItem.review)
             Row{
                 Icon(imageVector = Icons.Filled.ThumbUp, contentDescription = "", tint = MaterialTheme.colorScheme.tertiary)

@@ -1,5 +1,6 @@
 package stud.gilmon.presentation.ui.feed
 
+import android.icu.text.ListFormatter.Width
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +24,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -173,27 +176,26 @@ fun SearchBar(userlocation: String,onSearckClick:()->Unit) {
                 tint = TextFieldLabelColor
             )
         }
-        Row {
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
             Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.size(35.dp),
+                onClick = {  },
+                modifier = Modifier.size(45.dp),
                 shape = RoundedCornerShape(10.dp),
             ) {
                 Icon(
-                    modifier = Modifier.size(26.dp),
-                    imageVector = Icons.Filled.Info,
+                    modifier = Modifier.size(10.dp),
+                    imageVector = Icons.Filled.Search,
                     contentDescription = null,
-                    tint = TextFieldLabelColor
+                    tint = Color.Red
                 )
             }
+            Spacer(modifier = Modifier.width(1.dp).background(TextFieldContainerColor).height(30.dp).padding(horizontal = 15.dp))
             LazyRow(horizontalArrangement = spacedBy(10.dp)) {
                 items(10) {
                     CustomButton(
                         text ="button$it",
                         containerColor = TextFieldContainerColor
-                    ) {
-
-                    }
+                    ) { }
                 }
             }
         }

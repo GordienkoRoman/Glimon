@@ -280,7 +280,7 @@ fun AccountSettings(
     user: MutableState<UsersEntity>
 ) {
     val showChangeEmailBottomSheet = rememberSaveable { mutableStateOf(false) }
-    val mail = rememberSaveable { mutableStateOf(user.value.mail) }
+    val mail = rememberSaveable { mutableStateOf(user.value.userId) }
     val showChangePhoneNumberBottomSheet = rememberSaveable { mutableStateOf(false) }
     val number = rememberSaveable { mutableStateOf(user.value.number) }
     val showChangePasswordBottomSheet = rememberSaveable { mutableStateOf(false) }

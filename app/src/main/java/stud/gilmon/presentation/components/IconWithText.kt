@@ -41,7 +41,7 @@ fun IconWithText(
 }
 
 @Composable
-fun SocialNetworkIcon(modifier: Modifier= Modifier,idIcon:Int=R.drawable.odnoklassniki,color:Color=Color.Transparent,onClick:()->Unit={}){
+fun SocialNetworkIcon(modifier: Modifier= Modifier, idIcon:Int, color:Color=Color.Transparent, onClick:()->Unit={}){
 
     Button(modifier = modifier, onClick = onClick, colors = ButtonDefaults.buttonColors(
         containerColor = color),

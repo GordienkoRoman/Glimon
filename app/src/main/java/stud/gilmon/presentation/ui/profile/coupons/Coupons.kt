@@ -123,7 +123,7 @@ fun CouponsProfile(lazyListState: LazyListState,factory:ViewModelFactory) {
                     verticalArrangement = Arrangement.Center
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.blank_paper_icon),
+                        imageVector = ImageVector.vectorResource(R.drawable.baseline_people_24),
                         contentDescription = null,
                         tint = Color.White,
                         modifier = Modifier.size(50.dp)

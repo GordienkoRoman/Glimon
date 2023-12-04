@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -33,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
@@ -77,7 +75,7 @@ fun SupportScreen(onClick: ()->Unit) {
         Row {
             SocialNetworkIcon(idIcon = R.drawable.vk_logo)
             Spacer(Modifier.width(15.dp))
-            SocialNetworkIcon(idIcon = R.drawable.odnoklassniki)
+            SocialNetworkIcon(idIcon = R.drawable.ok_logo)
         }
         CustomText(text = "Phone Number:")
         Button(onClick = {

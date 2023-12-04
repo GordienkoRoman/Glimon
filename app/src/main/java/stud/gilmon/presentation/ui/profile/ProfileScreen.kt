@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -227,6 +228,7 @@ fun ProfileTopBar(
             .fillMaxWidth()
             .animateContentSize(animationSpec = tween(durationMillis = 300))
             .background(MaterialTheme.colorScheme.onBackground)
+            .padding(top = 15.dp)
             .height(
                 TOP_BAR_HEIGHT
             )
@@ -234,14 +236,17 @@ fun ProfileTopBar(
     {
         Row()
         {
-            CustomText(text = "Hi,\n", textColor = TextFieldLabelColor)
-            Text(
-                "${user.value.firstName} ${user.value.lastName}",
-                fontSize = 30.sp,
-                color = Color.White,
-                modifier = Modifier
-                    .weight(1f)
-            )
+            Column( modifier = Modifier
+                .weight(1f)) {
+                Text(text = "Hi,", color = TextFieldLabelColor)
+           //     CustomText(text = "Hi,", textColor = TextFieldLabelColor)
+                Text(
+                    "${user.value.firstName} ${user.value.lastName}",
+                    fontSize = 25.sp,
+                    color = Color.White,
+
+                )
+            }
             Image(painter = painter,
                 modifier = Modifier
                     .size(50.dp)

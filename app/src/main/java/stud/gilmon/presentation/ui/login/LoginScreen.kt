@@ -42,6 +42,7 @@ import com.example.dog_observer.viewModelFactory.ViewModelFactory
 import com.google.gson.Gson
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
+import stud.gilmon.R
 import stud.gilmon.base.utils.launchAndCollectIn
 import stud.gilmon.data.oauth.GithubAuthConfig
 import stud.gilmon.data.oauth.MailAuthConfig
@@ -49,7 +50,11 @@ import stud.gilmon.presentation.components.CustomText
 import stud.gilmon.presentation.components.CustomTextField
 import stud.gilmon.presentation.components.LabelText
 import stud.gilmon.presentation.components.SocialNetworkIcon
+import stud.gilmon.presentation.components.TextWithLink
+import stud.gilmon.presentation.theme.BlueVK
 import stud.gilmon.presentation.theme.OrangeOdnoklassniki
+import stud.gilmon.presentation.theme.TextFieldContainerColor
+import stud.gilmon.presentation.theme.TextFieldLabelColor
 import stud.gilmon.presentation.theme.YellowGlimon
 import stud.gilmon.presentation.ui.Screen
 
@@ -90,6 +95,7 @@ fun LoginScreen(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.onBackground)
             .fillMaxWidth()
+            .padding(top = 10.dp)
             .fillMaxHeight(0.95f),
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -120,7 +126,7 @@ fun LoginScreen(
                     "and promo codes with 100% discount",
             fontSize = 13.sp
         )
-        Divider( thickness = 1.dp, color = Color.LightGray)
+        Divider( thickness = 1.dp, color = TextFieldLabelColor)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -150,34 +156,46 @@ fun LoginScreen(
                 )
             }
             SocialNetworkIcons(viewModel = viewModel)
+            TextWithLink(textLink = "Sign Up", textBefore ="New to Glimon?" ) {
+
+            }
+            Column(   verticalArrangement = Arrangement.spacedBy(5.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+
+                CustomText(text = "By continuing, you agree to Glimon's", textColor = TextFieldLabelColor)
+                TextWithLink(textLink = "Conditions of Use " , textAfter = "and") {
+
+                }
+                TextWithLink(textLink = "Privacy Notice") {
+
+                }
+            }
+
         }
     }
 }
 
 @Composable
 fun SocialNetworkIcons(viewModel: LoginViewModel) {
-    CustomText(text = "Or by Social Media")
+    CustomText(text = "Or by social media")
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
     ) {
-        SocialNetworkIcon(color = OrangeOdnoklassniki) {
+        SocialNetworkIcon(color = OrangeOdnoklassniki, idIcon = R.drawable.ok_logo) {
+
+        }
+        SocialNetworkIcon(color = Color.White, idIcon = R.drawable.github_logo)
+        {
             viewModel.config = GithubAuthConfig
             viewModel.openLoginPage(GithubAuthConfig.login)
+
         }
-        SocialNetworkIcon(color = OrangeOdnoklassniki)
+        SocialNetworkIcon(color = BlueVK, idIcon = R.drawable.vk_logo)
         {
             viewModel.config = MailAuthConfig
             viewModel.openLoginPage(MailAuthConfig.login)
         }
-        SocialNetworkIcon(color = OrangeOdnoklassniki)
-    }
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        SocialNetworkIcon(color = OrangeOdnoklassniki)
-        SocialNetworkIcon(color = OrangeOdnoklassniki)
     }
 }
 
@@ -202,7 +220,7 @@ fun CloseButton( onClose: () -> Unit) {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .shadow(8.dp, shape = CircleShape)
-            .size(28.dp)
+            .size(25.dp)
             .clip(CircleShape)
             .clickable {
                 onClose()

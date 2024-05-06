@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
@@ -33,38 +36,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.SubcomposeAsyncImage
-import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
 import stud.gilmon.data.model.FeedItem
-import stud.gilmon.data.remote.Location
-import stud.gilmon.data.remote.UnsplashImages
-import stud.gilmon.data.remote.Urls
 import stud.gilmon.presentation.components.CustomBottomSheetContainer
 import stud.gilmon.presentation.components.CustomList
 import stud.gilmon.presentation.components.CustomText
 import stud.gilmon.presentation.components.LabelText
 import stud.gilmon.presentation.components.SelectButton
-import stud.gilmon.presentation.ui.Screen
-import stud.gilmon.presentation.ui.feed.FeedItemBottom
-import stud.gilmon.presentation.ui.feed.FeedItemComponent
+import stud.gilmon.presentation.theme.TextFieldLabelColor
 import stud.gilmon.presentation.ui.profile.TOP_NAVIGATION_BAR_HEICHT
 
 
 @Composable
-fun CouponsProfile(lazyListState: LazyListState,factory:ViewModelFactory) {
+fun CouponsProfile(userId: String, lazyListState: LazyListState, factory: ViewModelFactory) {
 
-    val viewModel: CouponsViewModel = viewModel(factory = factory )
+    val viewModel: CouponsViewModel = viewModel(factory = factory)
     val couponStatus = rememberSaveable { mutableStateOf("All") }
     val sortType = rememberSaveable { mutableStateOf("By new") }
     val screenState = viewModel.screenState.collectAsState(CouponsScreenState.Initial)
     val showCouponStatusBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showSortTypeBottomSheet = rememberSaveable { mutableStateOf(false) }
-    CopunsStatusBottomSheet(showCouponStatusBottomSheet, couponStatus)
+    CouponsStatusBottomSheet(showCouponStatusBottomSheet, couponStatus)
     val currentState = screenState.value
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -80,7 +77,7 @@ fun CouponsProfile(lazyListState: LazyListState,factory:ViewModelFactory) {
             .navigationBarsPadding(),
         state = lazyListState,
         verticalArrangement = Arrangement.spacedBy(15.dp)
-    ){
+    ) {
         item {
             Spacer(
                 modifier = Modifier
@@ -99,26 +96,22 @@ fun CouponsProfile(lazyListState: LazyListState,factory:ViewModelFactory) {
             }
         }
 
-        if(currentState is CouponsScreenState.Coupons)
-        {
+        if (currentState is CouponsScreenState.Coupons) {
             items(
                 currentState.coupons.size
             )
             {
                 val feedItem = currentState.coupons[it]
-                CouponItem(feedItem = feedItem)
+                CouponItem(feedItem = feedItem,userId,viewModel)
 
             }
-        }
-        else
-        {
-            item{
+        } else {
+            item {
                 Column(
                     Modifier
                         .clip(shape = RoundedCornerShape(20.dp))
                         .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.onBackground)
-                    ,
+                        .background(MaterialTheme.colorScheme.onBackground),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -143,8 +136,7 @@ fun CouponsProfile(lazyListState: LazyListState,factory:ViewModelFactory) {
 }
 
 @Composable
-fun CouponItem(feedItem: FeedItem)
-{
+fun CouponItem(feedItem: FeedItem,userId: String,viewModel: CouponsViewModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -159,7 +151,15 @@ fun CouponItem(feedItem: FeedItem)
                 .padding(10.dp),
             verticalArrangement = Arrangement.spacedBy(15.dp),
         ) {
-            LabelText(text = feedItem.companyName)
+            Row {
+                LabelText(text = feedItem.companyName, modifier = Modifier.weight(1f))
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "",
+                    tint = TextFieldLabelColor,
+                    modifier = Modifier.clickable { viewModel.deleteCoupon(feedItem, userId)}
+                )
+            }
             CustomText(text = feedItem.promotionName)
             Box(
                 modifier = Modifier
@@ -172,7 +172,7 @@ fun CouponItem(feedItem: FeedItem)
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop,
                     loading = {
-                        CircularProgressIndicator()
+                       // CircularProgressIndicator()
                     }
                 )
             }
@@ -181,11 +181,12 @@ fun CouponItem(feedItem: FeedItem)
         }
         Divider(thickness = 1.dp, color = Color.DarkGray)
 
-       // FeedItemBottom(photo)
+        // FeedItemBottom(photo)
     }
 }
+
 @Composable
-fun CopunsStatusBottomSheet(
+fun CouponsStatusBottomSheet(
     showModalBottomSheet: MutableState<Boolean>,
     option: MutableState<String>
 ) {

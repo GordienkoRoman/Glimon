@@ -32,4 +32,7 @@ class ReviewsViewModel @Inject constructor(
         started = SharingStarted.Lazily,
         initialValue = listOf()
     )
+    fun deleteReview(reviewItem: ReviewItem,userId: String){
+        roomRepository.deleteReview(reviewItem, userId)
+    }
 }

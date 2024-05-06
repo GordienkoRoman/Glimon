@@ -1,8 +1,5 @@
 package stud.gilmon.presentation.ui.profile.reviews
 
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -41,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
 import stud.gilmon.data.model.ReviewItem
 import stud.gilmon.presentation.components.CustomBottomSheetContainer
@@ -53,7 +51,7 @@ import stud.gilmon.presentation.theme.TextFieldLabelColor
 import stud.gilmon.presentation.ui.profile.TOP_NAVIGATION_BAR_HEICHT
 
 @Composable
-fun ReviewsProfile(lazyListState: LazyListState,factory: ViewModelFactory) {
+fun ReviewsProfile(userId: String, lazyListState: LazyListState, factory: ViewModelFactory) {
     val viewModel: ReviewsViewModel = viewModel(factory = factory)
     val reviewsStatus = rememberSaveable { mutableStateOf("All") }
     val sortType = rememberSaveable { mutableStateOf("By new") }
@@ -107,7 +105,7 @@ fun ReviewsProfile(lazyListState: LazyListState,factory: ViewModelFactory) {
             )
             {
                 val reviewItem = currentState.reviews[it]
-                ReviewItem(reviewItem = reviewItem)
+                ReviewItem(reviewItem,userId,viewModel)
 
             }
         }
@@ -162,7 +160,7 @@ fun EmptyList(){
     }
 }
 @Composable
-fun ReviewItem(reviewItem: ReviewItem){
+fun ReviewItem(reviewItem: ReviewItem,userId:String,viewModel: ReviewsViewModel){
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -190,6 +188,12 @@ fun ReviewItem(reviewItem: ReviewItem){
             Row{
                 Icon(imageVector = Icons.Filled.ThumbUp, contentDescription = "", tint = MaterialTheme.colorScheme.tertiary)
                 CustomText(text = "Useful?", textColor = TextFieldLabelColor)
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = "",
+                    tint = TextFieldLabelColor,
+                    modifier = Modifier.clickable { viewModel.deleteReview(reviewItem, userId) }
+                )
             }
         }
     }

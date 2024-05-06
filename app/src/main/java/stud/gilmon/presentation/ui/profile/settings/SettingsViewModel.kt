@@ -1,6 +1,8 @@
 package stud.gilmon.presentation.ui.profile.settings
 
 import android.content.Context
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -20,7 +22,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val roomRepository: RoomRepository,
     private val dataStoreRepository: DataStoreRepository,
-    context: Context
+    val context: Context
 ) : ViewModel(){
 
     private val Context.dataStore by preferencesDataStore(name = "settings")
@@ -29,6 +31,7 @@ class SettingsViewModel @Inject constructor(
 
     fun updateUserData(usersEntity: UsersEntity){
         roomRepository.upsertUser(usersEntity)
+        Toast.makeText(context, "User updated", Toast.LENGTH_LONG).show()
     }
 
     fun setUser(onClick: () ->Unit) {

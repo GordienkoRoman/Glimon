@@ -2,6 +2,7 @@ package stud.gilmon.di.components
 
 import android.content.Context
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.paging.PagingSourceFactory
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -13,6 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import stud.gilmon.MainActivity
 import stud.gilmon.data.remote.UnsplashApi
 import stud.gilmon.data.remote.network.AuthorizationInterceptor
+import stud.gilmon.data.remote.paging.UnsplashPhotosPagingSource
 import stud.gilmon.data.remote.userApi.GithubApi
 import stud.gilmon.data.remote.userApi.MailApi
 import stud.gilmon.di.modules.DataBaseModule
@@ -79,7 +81,7 @@ class AppModule {
     @Provides
     fun provideMailApiFactService(okHttpClient: OkHttpClient): MailApi {
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://www.appsmail.ru/platform/api")
+            .baseUrl("http://www.appsmail.ru/platform/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()
@@ -87,7 +89,7 @@ class AppModule {
     }
     @AppScope
     @Provides
-    fun provideUnsplashImagesServise(okHttpClient: OkHttpClient): UnsplashApi {
+    fun provideUnsplashImagesService(okHttpClient: OkHttpClient): UnsplashApi {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.unsplash.com/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -95,6 +97,7 @@ class AppModule {
             .build()
         return retrofit.create(UnsplashApi::class.java)
     }
+
 
 }
 

@@ -1,14 +1,20 @@
 package stud.gilmon.presentation.ui.feed
 
-import android.icu.text.ListFormatter.Width
+import android.app.Activity
+import android.content.Intent
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,12 +25,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,46 +43,51 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import androidx.paging.compose.LazyPagingItems
+import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
 import stud.gilmon.data.local.entities.UsersEntity
-import stud.gilmon.data.remote.UnsplashImages
+import stud.gilmon.data.model.FeedItem
+import stud.gilmon.data.remote.UnsplashDto
+import stud.gilmon.data.remote.toFeedItem
 import stud.gilmon.presentation.bottomSheets.ChangeLocationBottomSheet
 import stud.gilmon.presentation.components.CustomButton
 import stud.gilmon.presentation.components.SelectButton
 import stud.gilmon.presentation.components.TwoRowsTopAppBar
 import stud.gilmon.presentation.theme.TextFieldContainerColor
 import stud.gilmon.presentation.theme.TextFieldLabelColor
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
-    photos: List<UnsplashImages>,
+    feedItems: LazyPagingItems<FeedItem>,
     factory: ViewModelFactory,
     user: UsersEntity,
-    onSearckClick: () -> Unit,
+    onSearchClick: (String) -> Unit,
     onItemClick: (Int) -> Unit
 ) {
     val location = rememberSaveable { mutableStateOf("") }
 
-    val viewModel:FeedViewModel =  viewModel(factory = factory)
+    val viewModel: FeedViewModel = viewModel(factory = factory)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scrollBehavior2 = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     SideEffect {
-        viewModel.setPhotos(photos)
+      //  viewModel.setPhotos(photos)
     }
     val showChooseLocationBottomSheet = rememberSaveable { mutableStateOf(false) }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior2.nestedScrollConnection),
-        topBar =  {
+        topBar = {
             TwoRowsTopAppBar(
                 title = {
-                     SearchBar(userlocation = "",onSearckClick)
+                    SearchBar(userlocation = "", onSearchClick)
                 },
-                pinnedHeight =60.dp,
+                pinnedHeight = 60.dp,
                 maxHeight = 250.dp,
                 scrollBehavior = scrollBehavior2
             )
@@ -89,10 +98,10 @@ fun FeedScreen(
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                 .fillMaxSize()
                 .padding(it),
-            topBar =  {
+            topBar = {
                 TwoRowsTopAppBar(
                     title = {},
-                    pinnedHeight =0.dp,
+                    pinnedHeight = 0.dp,
                     maxHeight = 1.dp,
                     scrollBehavior = scrollBehavior
                 )
@@ -104,15 +113,22 @@ fun FeedScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
                     .padding(bottom = it.calculateBottomPadding()),
-                contentPadding = PaddingValues(   bottom = 75.dp,top = 30.dp, start = 15.dp, end = 15.dp),
+                contentPadding = PaddingValues(
+                    bottom = 75.dp,
+                    top = 30.dp,
+                    start = 15.dp,
+                    end = 15.dp
+                ),
                 /*   .windowInsetsTopHeight(WindowInsets.safeDrawing)*/
                 verticalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                items(photos.size)
-                { index ->
-                    FeedItemComponent(photos[index],
-                        onItemClick =onItemClick,
-                        index = index)
+                items(count = feedItems.itemCount) { index ->
+                    val item = feedItems[index]
+                    FeedItemComponent(
+                        item!!,
+                        onItemClick = onItemClick,
+                        index = index
+                    )
                 }
             }
         }
@@ -128,8 +144,28 @@ fun FeedScreen(
 
 
 @Composable
-fun SearchBar(userlocation: String,onSearckClick:()->Unit) {
+fun SearchBar(userlocation: String, onSearckClick: (String) -> Unit) {
+
+    val searchText = rememberSaveable {
+        mutableStateOf("")
+    }
+    val context = LocalContext.current
     val showChooseLocationBottomSheet = rememberSaveable { mutableStateOf(false) }
+    val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+    intent.putExtra(
+        RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+    )
+    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+    val recognizeVoiceLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(), onResult = {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val text = it.data?.getStringArrayListExtra(
+                    RecognizerIntent.EXTRA_RESULTS
+                ) as ArrayList<String>
+                onSearckClick(text[0])
+            }
+        })
     Column(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.onBackground)
@@ -147,7 +183,7 @@ fun SearchBar(userlocation: String,onSearckClick:()->Unit) {
             showChooseLocationBottomSheet.value = !showChooseLocationBottomSheet.value
         }
         Button(
-            onClick = {onSearckClick()},
+            onClick = { onSearckClick("null") },
             colors = ButtonDefaults.buttonColors(
                 containerColor = TextFieldContainerColor
             ),
@@ -170,15 +206,28 @@ fun SearchBar(userlocation: String,onSearckClick:()->Unit) {
             )
 
             Icon(
-                modifier = Modifier.size(26.dp),
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable {
+                        if (!SpeechRecognizer.isRecognitionAvailable(context)) {
+                            Toast
+                                .makeText(context, "Mic is off", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            recognizeVoiceLauncher.launch(intent)
+                        }
+                    },
                 painter = painterResource(id = R.drawable.baseline_mic_24),
                 contentDescription = null,
                 tint = TextFieldLabelColor
             )
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Button(
-                onClick = {  },
+                onClick = { },
                 modifier = Modifier.size(45.dp),
                 shape = RoundedCornerShape(10.dp),
             ) {
@@ -189,11 +238,17 @@ fun SearchBar(userlocation: String,onSearckClick:()->Unit) {
                     tint = Color.Red
                 )
             }
-            Spacer(modifier = Modifier.width(1.dp).background(TextFieldContainerColor).height(30.dp).padding(horizontal = 15.dp))
+            Spacer(
+                modifier = Modifier
+                    .width(1.dp)
+                    .background(TextFieldContainerColor)
+                    .height(30.dp)
+                    .padding(horizontal = 15.dp)
+            )
             LazyRow(horizontalArrangement = spacedBy(10.dp)) {
                 items(10) {
                     CustomButton(
-                        text ="button$it",
+                        text = "button$it",
                         containerColor = TextFieldContainerColor
                     ) { }
                 }

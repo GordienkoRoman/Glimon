@@ -34,7 +34,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
@@ -113,6 +113,7 @@ fun SettingsProfile(
         }
     }
 }
+
 
 @Composable
 fun PersonalData(

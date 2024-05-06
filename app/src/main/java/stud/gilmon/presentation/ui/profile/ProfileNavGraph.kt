@@ -7,7 +7,7 @@ import androidx.compose.runtime.MutableState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.presentation.ui.Screen
 import stud.gilmon.presentation.ui.profile.coupons.CouponsProfile
@@ -33,10 +33,10 @@ fun ProfileNavGraph(
     )
     {
         composable(route = ProfileDestinations.CouponsProfile.route) {
-            CouponsProfile(lazyListStateList[0],viewModelFactory)
+            CouponsProfile(user.value.userId,lazyListStateList[0],viewModelFactory)
         }
         composable(route = ProfileDestinations.ReviewsProfile.route) {
-            ReviewsProfile(lazyListStateList[0],viewModelFactory)
+            ReviewsProfile(user.value.userId,lazyListStateList[0],viewModelFactory)
         }
         composable(route = ProfileDestinations.SettingsProfile.route) {
             SettingsProfile(

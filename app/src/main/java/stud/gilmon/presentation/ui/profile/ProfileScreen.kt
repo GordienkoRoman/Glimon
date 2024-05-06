@@ -5,7 +5,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,7 +32,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -56,11 +54,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
-import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import stud.gilmon.BaseApplication
 import stud.gilmon.R
 import stud.gilmon.data.local.entities.UsersEntity
-import stud.gilmon.presentation.components.CustomText
 import stud.gilmon.presentation.theme.TextFieldLabelColor
 
 @Composable
@@ -215,6 +212,7 @@ fun ProfileTopBar(
     val selectedImageUri = rememberSaveable { mutableStateOf("") }
     val painter =
         rememberAsyncImagePainter(model = selectedImageUri.value.ifEmpty { R.drawable.img })
+
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->

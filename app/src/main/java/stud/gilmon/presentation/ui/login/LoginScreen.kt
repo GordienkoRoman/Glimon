@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import com.google.gson.Gson
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationResponse
@@ -53,7 +53,6 @@ import stud.gilmon.presentation.components.SocialNetworkIcon
 import stud.gilmon.presentation.components.TextWithLink
 import stud.gilmon.presentation.theme.BlueVK
 import stud.gilmon.presentation.theme.OrangeOdnoklassniki
-import stud.gilmon.presentation.theme.TextFieldContainerColor
 import stud.gilmon.presentation.theme.TextFieldLabelColor
 import stud.gilmon.presentation.theme.YellowGlimon
 import stud.gilmon.presentation.ui.Screen
@@ -207,7 +206,7 @@ fun handleAuthResponseIntent(intent: Intent, viewModel: LoginViewModel) {
         ?.createTokenExchangeRequest()
     when {
         // авторизация завершались ошибкой
-        exception != null -> viewModel.onAuthCodeFailed(exception)
+        exception != null -> viewModel.onAuthCodeFailed()
         // авторизация прошла успешно, меняем код на токен
         tokenExchangeRequest != null ->
             viewModel.onAuthCodeReceived(tokenExchangeRequest)

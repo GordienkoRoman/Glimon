@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -40,14 +41,16 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.collectLatest
 import stud.gilmon.base.utils.launchAndCollectIn
+import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import stud.gilmon.data.local.entities.UsersEntity
-import stud.gilmon.data.remote.UnsplashImages
+import stud.gilmon.data.remote.UnsplashDto
 import stud.gilmon.presentation.theme.GilmonTheme
-import stud.gilmon.presentation.ui.feed.FeedItemScreen.FeedItemScreen
 import stud.gilmon.presentation.ui.main.MainScreen
 import javax.inject.Inject
+
 
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
@@ -67,11 +70,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
-        installSplashScreen().apply {
-            setKeepOnScreenCondition {
-                viewModel.loadingFlow.value
-            }
-        }
+
+//        installSplashScreen().apply {
+//            setKeepOnScreenCondition {
+//                viewModel.loadingFlow.value
+//            }
+//        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
@@ -83,18 +87,22 @@ class MainActivity : ComponentActivity() {
                 login.value = it.toString()
                 user.value = viewModel.getUser(it.toString()) ?: user.value.copy()
             }
-            LaunchedEffect(key1 = true) {
-                viewModel.getPhotos()
-            }
 
-            val photos = remember { mutableStateOf(listOf(UnsplashImages())) }
+
+            val photos = remember { mutableStateOf(listOf(UnsplashDto())) }
 //            LaunchedEffect(key1 = Unit )
 //            {
 //                scope.launch {
 //                    login.value=viewModel.getTUser()?: "404"
 //                }
 //            }
-
+            LaunchedEffect(key1 = true) {
+                //viewModel.getPhotos()
+                viewModel.feedItems.collectLatest {
+                  val s = it.toString()
+                    Log.d("TAG123",s)
+                }
+            }
             SideEffect {
                 viewModel.remoteRandomPhotosStateFlow.launchAndCollectIn(lifecycleOwner.value) {
                     if (it != null)
@@ -113,9 +121,11 @@ class MainActivity : ComponentActivity() {
                         .windowInsetsPadding(WindowInsets.safeDrawing),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                   // Test()
+                    val feedItems = viewModel.feedItems.collectAsLazyPagingItems()
+                  //  Test()
                     MainScreen(
                         darkTheme,
+                        feedItems,
                         photos.value,
                         user,
                         toggleTheme = { darkTheme = !darkTheme },
@@ -145,6 +155,7 @@ fun Context.findActivity(): Activity? = when (this) {
     is ContextWrapper -> baseContext.findActivity()
     else -> null
 }
+
 @Composable
 fun Test() {
 

@@ -15,13 +15,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.dog_observer.viewModelFactory.ViewModelFactory
+import androidx.paging.compose.LazyPagingItems
+import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import com.google.gson.Gson
 import stud.gilmon.data.local.entities.UsersEntity
-import stud.gilmon.data.remote.UnsplashImages
+import stud.gilmon.data.model.FeedItem
+import stud.gilmon.data.remote.UnsplashDto
 import stud.gilmon.presentation.ui.Screen
 import stud.gilmon.presentation.ui.Screen.Companion.KEY_AUTH_USER
 import stud.gilmon.presentation.ui.Screen.Companion.KEY_FEED_ITEM_INDEX
+import stud.gilmon.presentation.ui.Screen.Companion.KEY_FEED_SEARCH_INDEX
 import stud.gilmon.presentation.ui.feed.FeedItemScreen.FeedItemScreen
 import stud.gilmon.presentation.ui.feed.FeedScreen
 import stud.gilmon.presentation.ui.feed.FeedSearchScreen
@@ -32,7 +35,8 @@ import stud.gilmon.presentation.ui.support.SupportScreen
 @Composable
 fun MainScreenNavGraph(
     darkTheme: Boolean,
-    photos: List<UnsplashImages>,
+    feedItems:LazyPagingItems<FeedItem>,
+    photos: List<UnsplashDto>,
     navController: NavHostController,
     paddingValues: PaddingValues,
     user: MutableState<UsersEntity>,
@@ -49,12 +53,12 @@ fun MainScreenNavGraph(
             startDestination = Screen.FeedMain.route){
             composable(route = Screen.FeedMain.route)
             {
-                FeedScreen(photos,viewModelFactory,
+                FeedScreen(feedItems,viewModelFactory,
                     user.value,
-                    onSearckClick = {navController.navigate(Screen.FeedSearch.route) }
+                    onSearchClick = {navController.navigate(Screen.FeedSearch.route+'/'+it) }
                 ) { navController.navigate(Screen.FeedItem.route + "/" + it) }
             }
-            composable(route = Screen.FeedSearch.route,
+            composable(route = Screen.FeedSearch.withArgs("{$KEY_FEED_SEARCH_INDEX}"),
                 enterTransition = {
                     fadeIn(
                         animationSpec = tween(
@@ -77,9 +81,10 @@ fun MainScreenNavGraph(
                 }
             )
             {
-                FeedSearchScreen(viewModelFactory,photos)
+                val text = it.arguments?.getString(KEY_FEED_SEARCH_INDEX) ?: ""
+                FeedSearchScreen(viewModelFactory,photos,text)
             }
-            composable(route ="${Screen.FeedItem.route}/{$KEY_FEED_ITEM_INDEX}",
+            composable(route =Screen.FeedItem.withArgs("{$KEY_FEED_ITEM_INDEX}"),
                 enterTransition = {
                     fadeIn(
                         animationSpec = tween(
@@ -127,7 +132,8 @@ fun MainScreenNavGraph(
             }
         }
 
-        composable(route = "${Screen.Profile.route}/{$KEY_AUTH_USER}") {
+      // composable(route = "${Screen.Profile.route}/{$KEY_AUTH_USER}") {
+        composable(route = Screen.Profile.withArgs("{$KEY_AUTH_USER}")) {
             val userJson = it.arguments?.getString(KEY_AUTH_USER) ?: "404"
             user.value = Gson().fromJson(userJson, UsersEntity::class.java)
             //val user = remember { mutableStateOf(Gson().fromJson(userJson, UsersEntity::class.java)) }

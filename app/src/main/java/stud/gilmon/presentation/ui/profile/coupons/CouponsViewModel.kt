@@ -33,6 +33,9 @@ class CouponsViewModel @Inject constructor(
         initialValue = listOf()
     )
 
+    fun deleteCoupon(feedItem: FeedItem,userId: String){
+        roomRepository.deleteCoupon(feedItem, userId)
+    }
     var couponsStatus : Int = 0
     init {
         coroutineScope.launch {

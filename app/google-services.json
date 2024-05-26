@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "537727756687",
+    "project_id": "gilmon",
+    "storage_bucket": "gilmon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:537727756687:android:5927f10b9bbd4b46d4c3fa",
+        "android_client_info": {
+          "package_name": "stud.gilmon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIS_cR1gVB_3Y0uvQQl_0s3uzGEWYXZ90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

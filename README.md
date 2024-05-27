@@ -1,4 +1,5 @@
 # Glimon
+
 Учебное приложение -копия приложения Glimon
 UI написан на Jetpack Compose
 В приложении реализован Oauth с помощью библиотеки [AppAuth](https://appauth.io/)

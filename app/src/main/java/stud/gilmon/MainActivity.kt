@@ -126,7 +126,6 @@ class MainActivity : ComponentActivity() {
                     MainScreen(
                         darkTheme,
                         feedItems,
-                        photos.value,
                         user,
                         toggleTheme = { darkTheme = !darkTheme },
                         viewModelFactory = viewModelFactory

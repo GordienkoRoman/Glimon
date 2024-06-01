@@ -57,18 +57,21 @@ import stud.gilmon.presentation.theme.YellowGlimon
 
 
 @Composable
-fun FeedItemScreen(user: UsersEntity, factory: ViewModelFactory, photo: UnsplashDto) {
-    val showFeedItemBottomSheet = rememberSaveable { mutableStateOf(true) }
+fun FeedItemScreen(user: UsersEntity,
+                   factory: ViewModelFactory,
+                   feedItem: FeedItem) {
+    val showFeedItemBottomSheet = rememberSaveable {
+        mutableStateOf(true) }
     val configuration = LocalConfiguration.current
     val viewModel: FeedItemViewModel = viewModel(factory = factory)
     val screenHeight = configuration.screenHeightDp.dp
     val height = remember { mutableStateOf(screenHeight - 100.dp) }
     val feedItem = FeedItem(
-        companyName = photo.user.name ?: "name",
-        promotionName = photo.user.name ?: "name",
-        description = photo.description ?: photo.user.bio ?: "Description",
-        location = photo.location.name ?: photo.user.location ?: "Location",
-        imgUrl = photo.urls?.raw.toString()
+        companyName = feedItem.companyName ?: "name",
+        promotionName = feedItem.promotionName ?: "name",
+        description = feedItem.location ?: "Description",
+        location =feedItem.description?: "Location",
+        imgUrl = feedItem.imgUrl
     )
     Surface {
         Image(
@@ -94,11 +97,15 @@ fun FeedItemScreen(user: UsersEntity, factory: ViewModelFactory, photo: Unsplash
             showFeedItemBottomSheet.value = !showFeedItemBottomSheet.value
         }
     else {
-        Column(modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Bottom) {
-            CustomButton(text = "Show promotion",
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            CustomButton(
+                text = "Show promotion",
                 modifier = Modifier.padding(horizontal = 40.dp),
-                containerColor = MaterialTheme.colorScheme.background)
+                containerColor = MaterialTheme.colorScheme.background
+            )
             {
                 showFeedItemBottomSheet.value = true
             }
@@ -204,7 +211,7 @@ fun FeedScreenReviews(
     }
     WriteReviewBottomSheet(showModalBottomSheet = showModalBottomSheet, option = review) {
         if (it != "") {
-            viewModel.insertReview(feedItem,user.userId,it)
+            viewModel.insertReview(feedItem, user.userId, it)
         }
         showModalBottomSheet.value = !showModalBottomSheet.value
     }

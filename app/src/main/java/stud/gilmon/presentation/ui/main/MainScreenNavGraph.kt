@@ -36,7 +36,6 @@ import stud.gilmon.presentation.ui.support.SupportScreen
 fun MainScreenNavGraph(
     darkTheme: Boolean,
     feedItems:LazyPagingItems<FeedItem>,
-    photos: List<UnsplashDto>,
     navController: NavHostController,
     paddingValues: PaddingValues,
     user: MutableState<UsersEntity>,
@@ -82,7 +81,7 @@ fun MainScreenNavGraph(
             )
             {
                 val text = it.arguments?.getString(KEY_FEED_SEARCH_INDEX) ?: ""
-                FeedSearchScreen(viewModelFactory,photos,text)
+                FeedSearchScreen(viewModelFactory,feedItems,text)
             }
             composable(route =Screen.FeedItem.withArgs("{$KEY_FEED_ITEM_INDEX}"),
                 enterTransition = {
@@ -108,7 +107,7 @@ fun MainScreenNavGraph(
             )
             {
                 val index = it.arguments?.getString(KEY_FEED_ITEM_INDEX) ?: ""
-                FeedItemScreen(user.value,viewModelFactory,photos[index.toInt()])
+                FeedItemScreen(user.value,viewModelFactory,feedItems.itemSnapshotList.items[index.toInt()])
             }
         }
 

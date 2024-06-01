@@ -59,7 +59,6 @@ import stud.gilmon.presentation.ui.login.LoginScreen
 fun MainScreen(
     darkTheme: Boolean,
     feedItems:LazyPagingItems<FeedItem>,
-    photos: List<UnsplashDto>,
     user: MutableState<UsersEntity>,
     navController: NavHostController = rememberNavController(),
     toggleTheme: () -> Unit,
@@ -106,7 +105,6 @@ fun MainScreen(
             MainScreenNavGraph(
                 darkTheme,
                 feedItems,
-                photos,
                 navController,
                 it,
                 user,

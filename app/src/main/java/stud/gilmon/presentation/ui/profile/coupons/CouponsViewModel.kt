@@ -1,6 +1,7 @@
 package stud.gilmon.presentation.ui.profile.coupons
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -34,7 +35,9 @@ class CouponsViewModel @Inject constructor(
     )
 
     fun deleteCoupon(feedItem: FeedItem,userId: String){
-        roomRepository.deleteCoupon(feedItem, userId)
+        viewModelScope.launch {
+            roomRepository.deleteCoupon(feedItem, userId)
+        }
     }
     var couponsStatus : Int = 0
     init {

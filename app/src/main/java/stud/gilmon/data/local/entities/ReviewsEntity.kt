@@ -28,7 +28,7 @@ data class ReviewsEntity(
 ) {
     companion object {
         fun fromReviewItem(reviewItem: ReviewItem, userId: String) =ReviewsEntity(
-            reviewItem.id,
+            0,
             reviewItem.review,
             userId,
             reviewItem.isUseful

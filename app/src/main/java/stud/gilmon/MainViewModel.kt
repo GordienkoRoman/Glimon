@@ -88,7 +88,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun getUser(login: String): UsersEntity? {
-        val user = roomRepository.getUser(login)
-        return user
+        return roomRepository.getUser(login)
     }
 }

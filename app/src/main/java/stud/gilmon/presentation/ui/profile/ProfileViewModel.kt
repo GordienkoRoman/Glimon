@@ -12,10 +12,7 @@ class ProfileViewModel @Inject constructor(
     context: Context,
     val roomRepository: RoomRepository
 ) : ViewModel() {
-    fun getUser(login:String):UsersEntity?{
-        val user = roomRepository.getUser(login)
-        return user
-    }
+
     fun updateUserData(usersEntity: UsersEntity){
         viewModelScope.launch {
             roomRepository.upsertUser(usersEntity)

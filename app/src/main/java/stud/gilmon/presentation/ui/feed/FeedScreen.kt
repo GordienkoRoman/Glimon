@@ -48,12 +48,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
+import kotlinx.coroutines.flow.StateFlow
 import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
 import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.model.FeedItem
-import stud.gilmon.data.remote.UnsplashDto
-import stud.gilmon.data.remote.toFeedItem
 import stud.gilmon.presentation.bottomSheets.ChangeLocationBottomSheet
 import stud.gilmon.presentation.components.CustomButton
 import stud.gilmon.presentation.components.SelectButton
@@ -67,7 +66,7 @@ import java.util.Locale
 fun FeedScreen(
     feedItems: LazyPagingItems<FeedItem>,
     factory: ViewModelFactory,
-    user: UsersEntity,
+    user: StateFlow<UsersEntity>,
     onSearchClick: (String) -> Unit,
     onItemClick: (Int) -> Unit
 ) {

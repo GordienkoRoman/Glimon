@@ -47,7 +47,7 @@ class RoomRepository @Inject constructor(
         reviewsDao.deleteReview(ReviewsEntity.fromReviewItem(reviewItem, userId))
     }
 
-    fun getUser(login: String): UsersEntity? {
+    suspend fun getUser(login: String): UsersEntity? {
         return usersDao.getUserByLogin(login)
     }
 

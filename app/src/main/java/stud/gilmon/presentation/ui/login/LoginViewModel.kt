@@ -70,6 +70,10 @@ class LoginViewModel @Inject constructor(
         get() = loadingMutableStateFlow.asStateFlow()
 
 
+    private val _userFlow  = MutableStateFlow( UsersEntity(userId = ""))
+    val userFlow
+        get() = _userFlow.asStateFlow()
+
     val authSuccessFlow: Flow<Unit>
         get() = authSuccessEventChannel.receiveAsFlow()
 
@@ -84,8 +88,10 @@ class LoginViewModel @Inject constructor(
         loadUserInfo(login)
     }
 
-    fun getUser(login: String): UsersEntity? {
-        return roomRepository.getUser(login)
+    fun getUser(login: String) {
+        viewModelScope.launch {
+            _userFlow.value = roomRepository.getUser(login)?: UsersEntity(userId = "")
+        }
     }
 
     private fun loadUserInfo(login: String) {
@@ -206,8 +212,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun openLoginPage(login: String) {
-        val user = roomRepository.getUser(login)
-        if (user != null) {
+        if (_userFlow.value.userId != null) {
             viewModelScope.launch {
                 dataStoreRepository.setUser(login)
                 authSuccessEventChannel.send(Unit)

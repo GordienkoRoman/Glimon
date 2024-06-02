@@ -9,7 +9,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -18,9 +17,9 @@ import androidx.navigation.navigation
 import androidx.paging.compose.LazyPagingItems
 import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.StateFlow
 import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.model.FeedItem
-import stud.gilmon.data.remote.UnsplashDto
 import stud.gilmon.presentation.ui.Screen
 import stud.gilmon.presentation.ui.Screen.Companion.KEY_AUTH_USER
 import stud.gilmon.presentation.ui.Screen.Companion.KEY_FEED_ITEM_INDEX
@@ -38,7 +37,7 @@ fun MainScreenNavGraph(
     feedItems:LazyPagingItems<FeedItem>,
     navController: NavHostController,
     paddingValues: PaddingValues,
-    user: MutableState<UsersEntity>,
+    user: StateFlow<UsersEntity>,
     toggleTheme: () -> Unit,
     viewModelFactory: ViewModelFactory
 ) {
@@ -53,7 +52,7 @@ fun MainScreenNavGraph(
             composable(route = Screen.FeedMain.route)
             {
                 FeedScreen(feedItems,viewModelFactory,
-                    user.value,
+                    user,
                     onSearchClick = {navController.navigate(Screen.FeedSearch.route+'/'+it) }
                 ) { navController.navigate(Screen.FeedItem.route + "/" + it) }
             }
@@ -107,7 +106,7 @@ fun MainScreenNavGraph(
             )
             {
                 val index = it.arguments?.getString(KEY_FEED_ITEM_INDEX) ?: ""
-                FeedItemScreen(user.value,viewModelFactory,feedItems.itemSnapshotList.items[index.toInt()])
+                FeedItemScreen(user,viewModelFactory,feedItems.itemSnapshotList.items[index.toInt()])
             }
         }
 
@@ -127,17 +126,17 @@ fun MainScreenNavGraph(
                         towards = AnimatedContentTransitionScope.SlideDirection.Start
                     )
                 }) {
-                ContactSupportScreen(user.value) { navController.navigate(Screen.SupportMain.route) }
+                ContactSupportScreen(user) { navController.navigate(Screen.SupportMain.route) }
             }
         }
 
       // composable(route = "${Screen.Profile.route}/{$KEY_AUTH_USER}") {
         composable(route = Screen.Profile.withArgs("{$KEY_AUTH_USER}")) {
             val userJson = it.arguments?.getString(KEY_AUTH_USER) ?: "404"
-            user.value = Gson().fromJson(userJson, UsersEntity::class.java)
+           // user.value = Gson().fromJson(userJson, UsersEntity::class.java)
             //val user = remember { mutableStateOf(Gson().fromJson(userJson, UsersEntity::class.java)) }
             ProfileScreen(
-                darkTheme, user = user,
+                darkTheme, user = Gson().fromJson(userJson, UsersEntity::class.java),
                 toggleTheme = toggleTheme,
             ) { navController.navigate(Screen.FeedMain.route) }
         }

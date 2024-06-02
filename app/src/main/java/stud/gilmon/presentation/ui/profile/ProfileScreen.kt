@@ -34,7 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,7 +63,7 @@ import stud.gilmon.presentation.theme.TextFieldLabelColor
 @Composable
 fun ProfileScreen(
     darkTheme: Boolean,
-    user: MutableState<UsersEntity>,
+    user: UsersEntity,
     navController: NavHostController = rememberNavController(),
     toggleTheme: () -> Unit,
     onClick: () -> Unit
@@ -71,7 +71,7 @@ fun ProfileScreen(
     val component =
         (LocalContext.current.applicationContext as BaseApplication).component
             .profileScreenComponentFactory()
-            .create(user.value.userId)
+            .create(user.userId)
     val viewModelFactory = component.getViewModelFactory()
     val viewModel: ProfileViewModel = viewModel(factory = viewModelFactory)
     val lazyListStateList: List<LazyListState> = listOf(
@@ -98,7 +98,7 @@ fun ProfileScreen(
 @Composable
 fun MainContent(
     darkTheme: Boolean,
-    user: MutableState<UsersEntity>,
+    user: UsersEntity,
     navController: NavHostController,
     toggleTheme: () -> Unit,
     viewModelFactory: ViewModelFactory,
@@ -205,7 +205,7 @@ fun ProfileTopNavigationBar(navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileTopBar(
-    user: MutableState<UsersEntity>,
+    user: UsersEntity,
     viewModel: ProfileViewModel
 ) {
 
@@ -218,7 +218,7 @@ fun ProfileTopBar(
         onResult = { uri ->
             selectedImageUri.value = uri.toString()
             //  user.value = user.value.copy(avatarUrl = uri.toString())
-            viewModel.updateUserData(user.value.copy(avatarUrl = uri.toString()))
+            viewModel.updateUserData(user.copy(avatarUrl = uri.toString()))
         }
     )
     Box(
@@ -239,7 +239,7 @@ fun ProfileTopBar(
                 Text(text = "Hi,", color = TextFieldLabelColor)
            //     CustomText(text = "Hi,", textColor = TextFieldLabelColor)
                 Text(
-                    "${user.value.firstName} ${user.value.lastName}",
+                    "${user.firstName} ${user.lastName}",
                     fontSize = 25.sp,
                     color = Color.White,
 

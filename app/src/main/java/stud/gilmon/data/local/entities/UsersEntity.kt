@@ -21,7 +21,7 @@ data class UsersEntity(
     @ColumnInfo(name = "notification")val notifications: Boolean = false,
     @ColumnInfo(name = "location") val location: String = "",
     @ColumnInfo(name = "avatar_url") val avatarUrl:String = "",
-    @ColumnInfo(name = "review_id")val reviewId: Long,
+    @ColumnInfo(name = "review_id")val reviewId: Long=0,
      @PrimaryKey
     val userId: String,
 ) {

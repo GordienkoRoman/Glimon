@@ -46,24 +46,4 @@ class DataStoreRepository @Inject constructor(
                 preferences[userKey] = login
             }
     }
-
-
-
-
-    // suspend fun getTUser(): String? {
-//        return dataStore.data
-//            .catch { exception ->
-//                if (exception is IOException) {
-//                    emit(emptyPreferences())
-//                } else {
-//                    throw exception
-//                }
-//            }
-//            .map { preferences ->
-//                val login = preferences[userKey] ?: ""
-//                login
-//            }.firstOrNull()
-  //  }
-
-
 }

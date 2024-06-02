@@ -22,7 +22,6 @@ import stud.gilmon.data.remote.UnsplashDto
 import stud.gilmon.data.remote.paging.UnsplashPhotosPagingSource
 import stud.gilmon.domain.DataStoreRepository
 import stud.gilmon.domain.RoomRepository
-import timber.log.Timber
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
@@ -32,6 +31,9 @@ class MainViewModel @Inject constructor(
     private val roomRepository: RoomRepository,
     private val unsplashApi: UnsplashApi
 ) : ViewModel() {
+    private val userMutableFlow  = MutableStateFlow( UsersEntity(userId = ""))
+    val userFlow
+        get() = userMutableFlow.asStateFlow()
     private val userKey = stringPreferencesKey("USER_KEY")
 
     val feedItems: StateFlow<PagingData<FeedItem>> = Pager(PagingConfig(10))
@@ -49,12 +51,12 @@ class MainViewModel @Inject constructor(
     val remoteRandomPhotosStateFlow: Flow<List<UnsplashDto>?>
         get() = remoteRandomPhotosMutableStateFlow.asStateFlow()
     var login = ""
+    val readFromDataStore = dataStoreRepository.loginFlow.asLiveData()
 
     init {
 
     }
 
-    val readFromDataStore = dataStoreRepository.loginFlow.asLiveData()
 
     //    fun get() : String{
 //        var login = ""
@@ -65,29 +67,32 @@ class MainViewModel @Inject constructor(
 //        return login
 //    }
 
-    fun getPhotos() {
+//    fun getPhotos() {
+//
+//        viewModelScope.launch {
+//            loadingMutableStateFlow.value = true
+//            runCatching {
+//
+//
+//                unsplashApi.getRandomPhotos("cfU1iXa1PBM5G1SfHlT7YhUOSDy9cwXF4GSQ1lDCsAM", 2)
+//            }.onSuccess {
+//                remoteRandomPhotosMutableStateFlow.value = it
+//                loadingMutableStateFlow.value = false
+//                /*    MailAuthConfig.login -> {
+//                        remoteUserMailInfoMutableStateFlow.value = it as RemoteUser.RemoteMailUser
+//                        insertItem(it as RemoteUser)
+//                    }*/
+//            }.onFailure {
+//                Timber.tag("Oauth").d(it)
+//                loadingMutableStateFlow.value = false
+//            }
+//        }
+//    }
 
+     fun getUser(login: String) {
         viewModelScope.launch {
-            loadingMutableStateFlow.value = true
-            runCatching {
-
-
-                unsplashApi.getRandomPhotos("cfU1iXa1PBM5G1SfHlT7YhUOSDy9cwXF4GSQ1lDCsAM", 2)
-            }.onSuccess {
-                remoteRandomPhotosMutableStateFlow.value = it
-                loadingMutableStateFlow.value = false
-                /*    MailAuthConfig.login -> {
-                        remoteUserMailInfoMutableStateFlow.value = it as RemoteUser.RemoteMailUser
-                        insertItem(it as RemoteUser)
-                    }*/
-            }.onFailure {
-                Timber.tag("Oauth").d(it)
-                loadingMutableStateFlow.value = false
-            }
+            userMutableFlow.value = roomRepository.getUser(login)?: UsersEntity(userId = "")
+            loadingMutableStateFlow.value = false
         }
-    }
-
-    fun getUser(login: String): UsersEntity? {
-        return roomRepository.getUser(login)
     }
 }

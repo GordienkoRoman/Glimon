@@ -12,5 +12,5 @@ interface UsersDao {
 
 
     @Query("SELECT * FROM users WHERE userId = :login")
-    fun getUserByLogin(login:String): UsersEntity?
+    suspend fun getUserByLogin(login:String): UsersEntity?
 }

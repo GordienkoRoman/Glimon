@@ -1,6 +1,7 @@
 package stud.gilmon.presentation.ui.profile.reviews
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -33,6 +34,8 @@ class ReviewsViewModel @Inject constructor(
         initialValue = listOf()
     )
     fun deleteReview(reviewItem: ReviewItem,userId: String){
-        roomRepository.deleteReview(reviewItem, userId)
+        viewModelScope.launch {
+            roomRepository.deleteReview(reviewItem, userId)
+        }
     }
 }

@@ -18,7 +18,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,7 +61,7 @@ import java.util.Locale
 fun SettingsProfile(
     darkTheme: Boolean,
     lazyListState: LazyListState,
-    user: MutableState<UsersEntity>,
+    user: UsersEntity,
     toggleTheme: () -> Unit,
     viewModelFactory: ViewModelFactory,
     onClick: () -> Unit
@@ -118,14 +117,14 @@ fun SettingsProfile(
 @Composable
 fun PersonalData(
     viewModel: SettingsViewModel,
-    user: MutableState<UsersEntity>
+    user: UsersEntity
 ) {
-    val name = rememberSaveable { mutableStateOf(user.value.firstName) }
-    val lastName = rememberSaveable { mutableStateOf(user.value.lastName) }
-    val gender = rememberSaveable { mutableStateOf(user.value.gender) }
+    val name = rememberSaveable { mutableStateOf(user.firstName) }
+    val lastName = rememberSaveable { mutableStateOf(user.lastName) }
+    val gender = rememberSaveable { mutableStateOf(user.gender) }
     //val dateOfBirth = rememberSaveable { mutableStateOf(user.age) }
-    val familyStatus = rememberSaveable { mutableStateOf(user.value.familyStatus) }
-    val aboutMe = rememberSaveable { mutableStateOf(user.value.aboutMe) }
+    val familyStatus = rememberSaveable { mutableStateOf(user.familyStatus) }
+    val aboutMe = rememberSaveable { mutableStateOf(user.aboutMe) }
     val showChooseGenderBottomSheet = rememberSaveable { mutableStateOf(false) }
     val showCooseFamilyStatusBottomSheet = rememberSaveable { mutableStateOf(false) }
     var date by remember {
@@ -139,7 +138,7 @@ fun PersonalData(
         }
         if (!it.isFocused) {
             if (focusedKey) {
-                val updUser = user.value.copy(
+                val updUser = user.copy(
                     firstName = name.value,
                     lastName = lastName.value,
                     gender = gender.value,
@@ -147,9 +146,8 @@ fun PersonalData(
                     familyStatus = familyStatus.value,
                     aboutMe = aboutMe.value,
                 )
-                if (user.value != updUser) {
-                    user.value = updUser
-                    viewModel.updateUserData(user.value)
+                if (user != updUser) {
+                    viewModel.updateUserData(updUser)
                 }
                 focusedKey = false
             }
@@ -157,7 +155,7 @@ fun PersonalData(
     }
     val onDismiss = {
         viewModel.updateUserData(
-            user.value.copy(
+            user.copy(
                 firstName = name.value,
                 lastName = lastName.value,
                 gender = gender.value,
@@ -250,7 +248,7 @@ fun PersonalData(
         {
             date = it
             viewModel.updateUserData(
-                user.value.copy(
+                user.copy(
                     firstName = name.value,
                     lastName = lastName.value,
                     gender = gender.value,
@@ -278,18 +276,18 @@ fun PersonalData(
 @Composable
 fun AccountSettings(
     viewModel: SettingsViewModel,
-    user: MutableState<UsersEntity>
+    user: UsersEntity
 ) {
     val showChangeEmailBottomSheet = rememberSaveable { mutableStateOf(false) }
-    val mail = rememberSaveable { mutableStateOf(user.value.userId) }
+    val mail = rememberSaveable { mutableStateOf(user.userId) }
     val showChangePhoneNumberBottomSheet = rememberSaveable { mutableStateOf(false) }
-    val number = rememberSaveable { mutableStateOf(user.value.number) }
+    val number = rememberSaveable { mutableStateOf(user.number) }
     val showChangePasswordBottomSheet = rememberSaveable { mutableStateOf(false) }
-    val password = rememberSaveable { mutableStateOf(user.value.password) }
+    val password = rememberSaveable { mutableStateOf(user.password) }
     val controller = LocalSoftwareKeyboardController.current
     val onDismiss = {
         viewModel.updateUserData(
-            user.value.copy(
+            user.copy(
                 mail = mail.value,
                 number = number.value,
                 password = password.value,

@@ -20,70 +20,43 @@ class RoomRepository @Inject constructor(
     private val reviewsDao: ReviewsDao,
     val context: Context
 ) {
-    fun upsertUser(usersEntity: UsersEntity) {
-        try {
-            runBlocking {
-                 usersDao.upsertUser(usersEntity)
-            }
-
-        } catch (_: SQLiteConstraintException) {
-        Timber.tag("ERROR")
-        }
+    suspend fun upsertUser(usersEntity: UsersEntity) {
+                usersDao.upsertUser(usersEntity)
     }
-    fun insertCoupon(feedItem: FeedItem,userId:String)
-    {
-        try {
-            runBlocking {
-                couponsDao.insertCoupon(CouponsEntity.fromFeedItem(feedItem,userId))
-            }
 
-        } catch (_: SQLiteConstraintException) {
-            Timber.tag("ERROR")
-        }
+    suspend fun insertCoupon(feedItem: FeedItem, userId: String) {
+                couponsDao.insertCoupon(CouponsEntity.fromFeedItem(feedItem, userId))
     }
-    fun deleteCoupon(feedItem: FeedItem,userId:String)
-    {
-        try {
-            runBlocking {
-                couponsDao.deleteCoupon(couponsEntity = CouponsEntity.fromFeedItem(feedItem,userId))
-            }
 
-        } catch (_: SQLiteConstraintException) {
-            Timber.tag("ERROR")
-        }
+    suspend fun deleteCoupon(feedItem: FeedItem, userId: String) {
+                couponsDao.deleteCoupon(
+                    couponsEntity = CouponsEntity.fromFeedItem(
+                        feedItem,
+                        userId
+                    )
+                )
     }
-    fun insertReview(feedItem: FeedItem,userId:String,review:String)
-    {
-        try {
-            runBlocking {
-                val couponsEntity = CouponsEntity.fromFeedItem(feedItem,"")
-                val id  =  couponsDao.insertCoupon(couponsEntity)
-                reviewsDao.insertReview(ReviewsEntity(id = id,review = review, userId = userId))
-            }
 
-        } catch (_: SQLiteConstraintException) {
-            Timber.tag("ERROR")
-        }
+    suspend fun insertReview(feedItem: FeedItem, userId: String, review: String) {
+        val couponsEntity = CouponsEntity.fromFeedItem(feedItem, "")
+        val id = couponsDao.insertCoupon(couponsEntity)
+        reviewsDao.insertReview(ReviewsEntity(id = id, review = review, userId = userId))
     }
-    fun deleteReview(reviewItem: ReviewItem,userId:String)
-    {
-        try {
-            runBlocking {
-                reviewsDao.deleteCoupon(ReviewsEntity.fromReviewItem(reviewItem,userId))
-            }
 
-        } catch (_: SQLiteConstraintException) {
-            Timber.tag("ERROR")
-        }
+    suspend fun deleteReview(reviewItem: ReviewItem, userId: String) {
+        reviewsDao.deleteReview(ReviewsEntity.fromReviewItem(reviewItem, userId))
     }
-    fun getUser(login: String): UsersEntity? {
+
+    suspend fun getUser(login: String): UsersEntity? {
         return usersDao.getUserByLogin(login)
     }
-    fun getCoupons(login: String): List<FeedItem> {
-        return  couponsDao.getByUserId(login).map { it.toFeedItem() }
+
+    suspend fun getCoupons(login: String): List<FeedItem> {
+        return couponsDao.getByUserId(login).map { it.toFeedItem() }
     }
-    fun getReviews(login: String): List<ReviewItem> {
-        return  reviewsDao.getById(login).map {
+
+    suspend fun getReviews(login: String): List<ReviewItem> {
+        return reviewsDao.getById(login).map {
             val feedItem = couponsDao.getById(it.id).toFeedItem()
             it.toReviewItem(feedItem)
         }

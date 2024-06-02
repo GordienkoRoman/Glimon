@@ -23,23 +23,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.StateFlow
 import stud.gilmon.data.local.entities.UsersEntity
-import stud.gilmon.presentation.components.CustomButton
-import stud.gilmon.presentation.components.CustomText
-import stud.gilmon.presentation.components.CustomTextField
 import stud.gilmon.presentation.components.CustomTextField2
 import stud.gilmon.presentation.components.TextWithLink
 
 @Composable
-fun ContactSupportScreen(user: UsersEntity,
+fun ContactSupportScreen(
+    user: StateFlow<UsersEntity>,
     onclick: () -> Unit = {}
 ) {
-    val name = remember{ mutableStateOf(user.firstName) }
-    val number = remember{ mutableStateOf(user.number) }
-    val mail = remember{ mutableStateOf(user.mail) }
+    val name = remember{ mutableStateOf(user.value.firstName) }
+    val number = remember{ mutableStateOf(user.value.number) }
+    val mail = remember{ mutableStateOf(user.value.mail) }
     val message = remember{ mutableStateOf("") }
     Column(
         verticalArrangement = Arrangement.spacedBy(15.dp),

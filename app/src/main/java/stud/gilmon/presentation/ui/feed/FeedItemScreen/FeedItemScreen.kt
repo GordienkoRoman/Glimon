@@ -41,11 +41,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import kotlinx.coroutines.flow.StateFlow
 import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
 import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.model.FeedItem
-import stud.gilmon.data.remote.UnsplashDto
 import stud.gilmon.presentation.bottomSheets.WriteReviewBottomSheet
 import stud.gilmon.presentation.components.CustomBottomSheetContainer
 import stud.gilmon.presentation.components.CustomButton
@@ -57,18 +57,22 @@ import stud.gilmon.presentation.theme.YellowGlimon
 
 
 @Composable
-fun FeedItemScreen(user: UsersEntity, factory: ViewModelFactory, photo: UnsplashDto) {
-    val showFeedItemBottomSheet = rememberSaveable { mutableStateOf(true) }
+fun FeedItemScreen(
+    user: StateFlow<UsersEntity>,
+    factory: ViewModelFactory,
+    feedItem: FeedItem) {
+    val showFeedItemBottomSheet = rememberSaveable {
+        mutableStateOf(true) }
     val configuration = LocalConfiguration.current
     val viewModel: FeedItemViewModel = viewModel(factory = factory)
     val screenHeight = configuration.screenHeightDp.dp
     val height = remember { mutableStateOf(screenHeight - 100.dp) }
     val feedItem = FeedItem(
-        companyName = photo.user.name ?: "name",
-        promotionName = photo.user.name ?: "name",
-        description = photo.description ?: photo.user.bio ?: "Description",
-        location = photo.location.name ?: photo.user.location ?: "Location",
-        imgUrl = photo.urls?.raw.toString()
+        companyName = feedItem.companyName ?: "name",
+        promotionName = feedItem.promotionName ?: "name",
+        description = feedItem.location ?: "Description",
+        location =feedItem.description?: "Location",
+        imgUrl = feedItem.imgUrl
     )
     Surface {
         Image(
@@ -94,11 +98,15 @@ fun FeedItemScreen(user: UsersEntity, factory: ViewModelFactory, photo: Unsplash
             showFeedItemBottomSheet.value = !showFeedItemBottomSheet.value
         }
     else {
-        Column(modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Bottom) {
-            CustomButton(text = "Show promotion",
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            CustomButton(
+                text = "Show promotion",
                 modifier = Modifier.padding(horizontal = 40.dp),
-                containerColor = MaterialTheme.colorScheme.background)
+                containerColor = MaterialTheme.colorScheme.background
+            )
             {
                 showFeedItemBottomSheet.value = true
             }
@@ -110,7 +118,7 @@ fun FeedItemScreen(user: UsersEntity, factory: ViewModelFactory, photo: Unsplash
 @Composable
 fun FeedItemBottomSheet(
     showModalBottomSheet: MutableState<Boolean>,
-    user: UsersEntity,
+    user: StateFlow<UsersEntity>,
     feedItem: FeedItem,
     height: MutableState<Dp>,
     viewModel: FeedItemViewModel,
@@ -160,7 +168,7 @@ fun FeedItemBottomSheet(
                         containerColor = YellowGlimon
                     )
                     {
-                        viewModel.insertCoupon(feedItem, user.userId)
+                        viewModel.insertCoupon(feedItem, user.value.userId)
                     }
                 }
                 item {
@@ -180,7 +188,7 @@ fun FeedItemBottomSheet(
 fun FeedScreenReviews(
     reviewsCount: Int = 0,
     feedItem: FeedItem,
-    user: UsersEntity,
+    user: StateFlow<UsersEntity>,
     showModalBottomSheet: MutableState<Boolean>,
     viewModel: FeedItemViewModel
 ) {
@@ -204,7 +212,7 @@ fun FeedScreenReviews(
     }
     WriteReviewBottomSheet(showModalBottomSheet = showModalBottomSheet, option = review) {
         if (it != "") {
-            viewModel.insertReview(feedItem,user.userId,it)
+            viewModel.insertReview(feedItem, user.value.userId, it)
         }
         showModalBottomSheet.value = !showModalBottomSheet.value
     }

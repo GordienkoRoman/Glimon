@@ -8,9 +8,9 @@ import stud.gilmon.data.local.entities.UsersEntity
 @Dao
 interface UsersDao {
     @Upsert(entity = UsersEntity::class)
-    fun upsertUser(userEntity: UsersEntity)
+    suspend fun upsertUser(userEntity: UsersEntity)
 
 
     @Query("SELECT * FROM users WHERE userId = :login")
-    fun getUserByLogin(login:String): UsersEntity?
+    suspend fun getUserByLogin(login:String): UsersEntity?
 }

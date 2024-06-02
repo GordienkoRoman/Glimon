@@ -10,7 +10,7 @@ import stud.gilmon.data.model.FeedItem
 )
 data class CouponsEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "coupon_id")  val couponId: Int?,
+    @ColumnInfo(name = "coupon_id")  val couponId: Int,
     @ColumnInfo(name = "user_id") val userId: String?,
     @ColumnInfo(name = "company_name") val companyName: String?,
     @ColumnInfo(name = "promotion_name") val promotionName: String?,
@@ -20,7 +20,7 @@ data class CouponsEntity(
 ) {
     companion object {
         fun fromFeedItem(feedItem: FeedItem, userId: String) = CouponsEntity(
-            feedItem.id,
+            0,
             userId = userId,
             companyName = feedItem.companyName,
             promotionName = feedItem.promotionName,

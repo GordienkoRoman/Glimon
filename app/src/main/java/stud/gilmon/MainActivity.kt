@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import stud.gilmon.base.utils.launchAndCollectIn
 import stud.gilmon.di.viewModelFactory.ViewModelFactory
@@ -71,38 +72,23 @@ class MainActivity : ComponentActivity() {
         component.inject(this)
         super.onCreate(savedInstanceState)
 
-//        installSplashScreen().apply {
-//            setKeepOnScreenCondition {
-//                viewModel.loadingFlow.value
-//            }
-//        }
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.loadingFlow.value
+            }
+        }
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             LockScreenOrientation(orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
-            val scope = rememberCoroutineScope()
-            val login = remember { mutableStateOf("") }
-            val user = remember { mutableStateOf(UsersEntity(userId = "", reviewId = 1)) }
             viewModel.readFromDataStore.observe(this) {
-                login.value = it.toString()
-                user.value = viewModel.getUser(it.toString()) ?: user.value.copy()
+               viewModel.getUser(it.toString())
+                //login.value = it.toString()
+               // user.value = viewModel.userFlow.value ?: user.value.copy()
             }
 
 
             val photos = remember { mutableStateOf(listOf(UnsplashDto())) }
-//            LaunchedEffect(key1 = Unit )
-//            {
-//                scope.launch {
-//                    login.value=viewModel.getTUser()?: "404"
-//                }
-//            }
-            LaunchedEffect(key1 = true) {
-                //viewModel.getPhotos()
-                viewModel.feedItems.collectLatest {
-                  val s = it.toString()
-                    Log.d("TAG123",s)
-                }
-            }
             SideEffect {
                 viewModel.remoteRandomPhotosStateFlow.launchAndCollectIn(lifecycleOwner.value) {
                     if (it != null)
@@ -111,10 +97,8 @@ class MainActivity : ComponentActivity() {
             }
             var darkTheme by remember { mutableStateOf(true) }
 
-            //screenState.collectAsState(CommentsScreenState.Initial)
             GilmonTheme(darkTheme) {
 
-                //  A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
@@ -122,12 +106,14 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val feedItems = viewModel.feedItems.collectAsLazyPagingItems()
+                    val user = remember {
+                        mutableStateOf(viewModel.userFlow)
+                    }
                   //  Test()
                     MainScreen(
                         darkTheme,
                         feedItems,
-                        photos.value,
-                        user,
+                        user.value,
                         toggleTheme = { darkTheme = !darkTheme },
                         viewModelFactory = viewModelFactory
                     )

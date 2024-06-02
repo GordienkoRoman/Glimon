@@ -3,7 +3,6 @@ package stud.gilmon.presentation.ui.profile
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,7 +16,7 @@ import stud.gilmon.presentation.ui.profile.settings.SettingsProfile
 @Composable
 fun ProfileNavGraph(
     darkTheme: Boolean,
-    user: MutableState<UsersEntity>,
+    user: UsersEntity,
     lazyListStateList: List<LazyListState>,
     navController: NavHostController,
     paddingValues: PaddingValues,
@@ -33,10 +32,10 @@ fun ProfileNavGraph(
     )
     {
         composable(route = ProfileDestinations.CouponsProfile.route) {
-            CouponsProfile(user.value.userId,lazyListStateList[0],viewModelFactory)
+            CouponsProfile(user.userId,lazyListStateList[0],viewModelFactory)
         }
         composable(route = ProfileDestinations.ReviewsProfile.route) {
-            ReviewsProfile(user.value.userId,lazyListStateList[0],viewModelFactory)
+            ReviewsProfile(user.userId,lazyListStateList[0],viewModelFactory)
         }
         composable(route = ProfileDestinations.SettingsProfile.route) {
             SettingsProfile(

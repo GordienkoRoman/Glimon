@@ -10,14 +10,14 @@ import stud.gilmon.data.local.entities.CouponsEntity
 @Dao
 interface CouponsDao {
     @Insert(entity = CouponsEntity::class, onConflict = OnConflictStrategy.IGNORE)
-    fun insertCoupon(couponsEntity: CouponsEntity):Long
+    suspend fun insertCoupon(couponsEntity: CouponsEntity):Long
 
     @Query("SELECT * FROM coupons WHERE user_id = :userId")
-    fun getByUserId(userId: String): List<CouponsEntity>
+    suspend fun getByUserId(userId: String): List<CouponsEntity>
 
     @Query("SELECT * FROM coupons WHERE coupon_id = :couponId")
-    fun getById(couponId: Long): CouponsEntity
+    suspend fun getById(couponId: Long): CouponsEntity
 
     @Delete(entity = CouponsEntity::class)
-    fun deleteCoupon(couponsEntity: CouponsEntity)
+    suspend fun deleteCoupon(couponsEntity: CouponsEntity)
 }

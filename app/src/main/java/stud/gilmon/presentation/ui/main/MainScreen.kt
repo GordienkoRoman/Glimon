@@ -3,23 +3,18 @@ package stud.gilmon.presentation.ui.main
 import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -29,24 +24,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import stud.gilmon.R
 import stud.gilmon.data.local.entities.UsersEntity
 import stud.gilmon.data.model.FeedItem
-import stud.gilmon.data.remote.UnsplashDto
 import stud.gilmon.presentation.components.CustomDragHandle
 import stud.gilmon.presentation.components.CustomNavigationBar
 import stud.gilmon.presentation.theme.TextFieldLabelColor
@@ -59,8 +51,7 @@ import stud.gilmon.presentation.ui.login.LoginScreen
 fun MainScreen(
     darkTheme: Boolean,
     feedItems:LazyPagingItems<FeedItem>,
-    photos: List<UnsplashDto>,
-    user: MutableState<UsersEntity>,
+    user: StateFlow<UsersEntity>,
     navController: NavHostController = rememberNavController(),
     toggleTheme: () -> Unit,
     viewModelFactory: ViewModelFactory
@@ -106,7 +97,6 @@ fun MainScreen(
             MainScreenNavGraph(
                 darkTheme,
                 feedItems,
-                photos,
                 navController,
                 it,
                 user,
@@ -122,7 +112,7 @@ fun MainScreen(
 @Composable
 fun MainBottomAppBar(
     navController: NavController,
-    user: MutableState<UsersEntity>,
+    user: StateFlow<UsersEntity>,
     scaffoldState: BottomSheetScaffoldState
 ) {
     var iconColor: MutableState<Color> = remember {

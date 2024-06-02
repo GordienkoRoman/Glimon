@@ -30,8 +30,10 @@ class SettingsViewModel @Inject constructor(
 
 
     fun updateUserData(usersEntity: UsersEntity){
-        roomRepository.upsertUser(usersEntity)
-        Toast.makeText(context, "User updated", Toast.LENGTH_LONG).show()
+        viewModelScope.launch {
+            roomRepository.upsertUser(usersEntity)
+            Toast.makeText(context, "User updated", Toast.LENGTH_LONG).show()
+        }
     }
 
     fun setUser(onClick: () ->Unit) {

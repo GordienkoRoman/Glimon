@@ -3,6 +3,7 @@ package stud.gilmon.presentation.ui.feed
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.compose.LazyPagingItems
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,6 +18,7 @@ import stud.gilmon.domain.RoomRepository
 import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import stud.gilmon.data.model.FeedItem
 
 @OptIn(FlowPreview::class)
 class FeedViewModel @Inject constructor(
@@ -30,15 +32,15 @@ class FeedViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false)
     val isSearching = _isSearching.asStateFlow()
 
-    private val _photos = MutableStateFlow(allPersons)
-    fun setPhotos(photos:List<UnsplashDto>)
+    private val _feedItems = MutableStateFlow(listOf(FeedItem(0,"","","","","",)))
+    fun setFeedItems(feedItems: LazyPagingItems<FeedItem>,)
     {
-        _photos.value = photos
+        _feedItems.value = feedItems.itemSnapshotList.items
     }
     val photos = searchText
         .debounce(500L)
         .onEach { _isSearching.update { true } }
-        .combine(_photos) { text, photos ->
+        .combine(_feedItems) { text, photos ->
             if(text.isBlank()) {
                 photos
             } else {
@@ -52,7 +54,7 @@ class FeedViewModel @Inject constructor(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            _photos.value
+            _feedItems.value
         )
 
     fun onSearchTextChange(text: String) {
@@ -60,8 +62,3 @@ class FeedViewModel @Inject constructor(
     }
 
 }
-private val allPersons = listOf(
-    UnsplashDto(
-       id = "1234"
-    ),
-)

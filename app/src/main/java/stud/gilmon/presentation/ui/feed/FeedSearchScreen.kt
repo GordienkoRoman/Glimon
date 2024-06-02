@@ -29,21 +29,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.LazyPagingItems
 import stud.gilmon.di.viewModelFactory.ViewModelFactory
 import stud.gilmon.R
-import stud.gilmon.data.remote.UnsplashDto
+import stud.gilmon.data.model.FeedItem
 import stud.gilmon.presentation.components.CustomText
 import stud.gilmon.presentation.components.LabelText
 import stud.gilmon.presentation.theme.TextFieldContainerColor
 import stud.gilmon.presentation.theme.TextFieldLabelColor
 
 @Composable
-fun FeedSearchScreen(factory : ViewModelFactory, photos:List<UnsplashDto>, text:String) {
-    val viewModel:FeedViewModel =  viewModel(factory = factory)
-    if(text != "null")
-    viewModel.onSearchTextChange(text)
+fun FeedSearchScreen(
+    factory: ViewModelFactory,
+    feedItems: LazyPagingItems<FeedItem>,
+    text: String
+) {
+    val viewModel: FeedViewModel = viewModel(factory = factory)
+    if (text != "null")
+        viewModel.onSearchTextChange(text)
     val searchText by viewModel.searchText.collectAsState()
-    viewModel.setPhotos(photos = photos)
+    viewModel.setFeedItems(feedItems)
     val photosList by viewModel.photos.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
     Column(
@@ -57,14 +62,15 @@ fun FeedSearchScreen(factory : ViewModelFactory, photos:List<UnsplashDto>, text:
                 .fillMaxWidth()
                 .padding(vertical = 10.dp)
                 .clip(shape = RoundedCornerShape(15.dp))
-                .background(TextFieldContainerColor)
-            ,
+                .background(TextFieldContainerColor),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if(isSearching) {
-                Box( modifier = Modifier
-                    .padding(horizontal = 5.dp)
-                    .size(30.dp)) {
+            if (isSearching) {
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp)
+                        .size(30.dp)
+                ) {
 //                    CircularProgressIndicator(
 //                        modifier = Modifier.align(Alignment.Center),
 //                        trackColor = Color.White
@@ -95,7 +101,7 @@ fun FeedSearchScreen(factory : ViewModelFactory, photos:List<UnsplashDto>, text:
                     unfocusedLabelColor = TextFieldLabelColor,
 
                     ),
-                label ={ Text("Search for anything...") }
+                label = { Text("Search for anything...") }
             )
             Icon(
                 modifier = Modifier
@@ -107,23 +113,25 @@ fun FeedSearchScreen(factory : ViewModelFactory, photos:List<UnsplashDto>, text:
             )
         }
         Divider(thickness = 2.dp, color = Color(0xFF1A1919))
-        LazyColumn(  modifier = Modifier
-            .fillMaxWidth()){
-            items(photosList){photo->
-                LabelText(text = photo.user.name ?: "name")
-                CustomText(text = photo.user.username ?: "name")
-                CustomText(text = photo.description ?: photo.user.bio ?: "Description")
-                CustomText(text = photo.location.name ?: photo.user.location ?: "Location")
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            items(photosList) { feedItem ->
+                LabelText(text = feedItem.companyName ?: "name")
+                CustomText(text = feedItem.promotionName ?: "name")
+                CustomText(text = feedItem.description  ?: "Description")
+                CustomText(text = feedItem.location ?: "Location")
                 CustomText(
-                    text = (photo.user.name ?:"") +
-                            (photo.user.username ?: "")+
-                            (photo.description ?: photo.user.bio ?: "") +
-                            (photo.location.name ?: photo.user.location ?: ""),
+                    text = (feedItem.companyName ?: "") +
+                            (feedItem.promotionName ?: "") +
+                            (feedItem.description  ?: "") +
+                            (feedItem.location ?: ""),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp)
                 )
-                Divider( thickness = 1.dp, color = TextFieldLabelColor)
+                Divider(thickness = 1.dp, color = TextFieldLabelColor)
             }
         }
     }
